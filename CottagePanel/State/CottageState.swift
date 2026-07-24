@@ -245,17 +245,17 @@ extension CottageState {
             : nil
 
         return actions.sorted { lhs, rhs in
+            let lhsFavorite = favoriteActionIDs.contains(lhs.id)
+            let rhsFavorite = favoriteActionIDs.contains(rhs.id)
+            if lhsFavorite != rhsFavorite {
+                return lhsFavorite
+            }
+
             if lhs.id == pinnedID {
                 return true
             }
             if rhs.id == pinnedID {
                 return false
-            }
-
-            let lhsFavorite = favoriteActionIDs.contains(lhs.id)
-            let rhsFavorite = favoriteActionIDs.contains(rhs.id)
-            if lhsFavorite != rhsFavorite {
-                return lhsFavorite
             }
 
             let lhsCount = executionCounts[lhs.id, default: 0]
