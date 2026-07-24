@@ -42,6 +42,10 @@
 "settings.confirmDestructiveActions" = "Confirm destructive actions";
 "settings.restorePanelSession" = "Restore recent panel state";
 "settings.restorePanelSeconds" = "Restore window: %d seconds";
+"settings.language" = "Language";
+"settings.language.system" = "System";
+"settings.language.english" = "English";
+"settings.language.simplifiedChinese" = "Simplified Chinese";
 "settings.togglePanelShortcut" = "Toggle panel shortcut";
 "settings.config.section" = "Config";
 "settings.openConfig" = "Open ~/.config/cottage/";
@@ -254,7 +258,7 @@
 "settings.panelAction.toggleHelp" = "Press Return to toggle this setting.";
 "settings.panelAction.cycleSubtitle" = "Press Return to cycle values";
 "settings.panelAction.cycleHelp" = "Press Return repeatedly to choose the next value.";
-"settings.panelAction.panel.subtitle" = "Panel size, launch behavior, restore session";
+"settings.panelAction.panel.subtitle" = "Panel size, language, launch behavior, restore session";
 "settings.panelAction.actions.subtitle" = "Config folders, reload, import, export";
 "settings.panelAction.shortcuts.subtitle" = "Shortcut overview and reset";
 "settings.panelAction.keyboard.subtitle" = "Keyboard-only navigation and preview controls";

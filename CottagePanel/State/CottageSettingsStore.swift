@@ -8,6 +8,7 @@ struct CottageSettings: Codable {
     var confirmsDestructiveActions: Bool
     var restoresPanelSession: Bool
     var panelSessionRestoreSeconds: Double
+    var appLanguage: CottageLanguage
     var keyboardOnlyModeEnabled: Bool
     var panelNavigationScheme: CottageKeyboardNavigationScheme
     var menuNavigationScheme: CottageKeyboardNavigationScheme
@@ -24,6 +25,7 @@ struct CottageSettings: Codable {
         confirmsDestructiveActions: true,
         restoresPanelSession: true,
         panelSessionRestoreSeconds: 30,
+        appLanguage: .system,
         keyboardOnlyModeEnabled: true,
         panelNavigationScheme: .arrows,
         menuNavigationScheme: .arrows,
@@ -41,6 +43,7 @@ struct CottageSettings: Codable {
         confirmsDestructiveActions: Bool,
         restoresPanelSession: Bool,
         panelSessionRestoreSeconds: Double,
+        appLanguage: CottageLanguage,
         keyboardOnlyModeEnabled: Bool,
         panelNavigationScheme: CottageKeyboardNavigationScheme,
         menuNavigationScheme: CottageKeyboardNavigationScheme,
@@ -56,6 +59,7 @@ struct CottageSettings: Codable {
         self.confirmsDestructiveActions = confirmsDestructiveActions
         self.restoresPanelSession = restoresPanelSession
         self.panelSessionRestoreSeconds = panelSessionRestoreSeconds
+        self.appLanguage = appLanguage
         self.keyboardOnlyModeEnabled = keyboardOnlyModeEnabled
         self.panelNavigationScheme = panelNavigationScheme
         self.menuNavigationScheme = menuNavigationScheme
@@ -79,6 +83,8 @@ struct CottageSettings: Codable {
             ?? Self.defaults.restoresPanelSession
         panelSessionRestoreSeconds = try container.decodeIfPresent(Double.self, forKey: .panelSessionRestoreSeconds)
             ?? Self.defaults.panelSessionRestoreSeconds
+        appLanguage = try container.decodeIfPresent(CottageLanguage.self, forKey: .appLanguage)
+            ?? Self.defaults.appLanguage
         keyboardOnlyModeEnabled = try container.decodeIfPresent(Bool.self, forKey: .keyboardOnlyModeEnabled)
             ?? Self.defaults.keyboardOnlyModeEnabled
         panelNavigationScheme = try container.decodeIfPresent(
@@ -176,6 +182,7 @@ enum CottageSettingsStore {
             confirmsDestructiveActions: CottageSettings.defaults.confirmsDestructiveActions,
             restoresPanelSession: CottageSettings.defaults.restoresPanelSession,
             panelSessionRestoreSeconds: CottageSettings.defaults.panelSessionRestoreSeconds,
+            appLanguage: CottageSettings.defaults.appLanguage,
             keyboardOnlyModeEnabled: CottageSettings.defaults.keyboardOnlyModeEnabled,
             panelNavigationScheme: CottageSettings.defaults.panelNavigationScheme,
             menuNavigationScheme: CottageSettings.defaults.menuNavigationScheme,

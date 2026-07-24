@@ -25,6 +25,13 @@ extension CottageState {
                 tags: ["restore", "session"]
             ),
             restoreSecondsItem(),
+            cycleItem(
+                id: "app-language",
+                titleKey: "settings.language",
+                value: appLanguage.title,
+                command: "cottage-settings:cycle:appLanguage",
+                tags: ["language", "locale", "i18n"]
+            ),
             stepItem(
                 id: "panel-width",
                 title: String(format: L10n.text("settings.panel.width"), Int(panelWidth)),

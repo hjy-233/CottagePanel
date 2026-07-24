@@ -73,6 +73,23 @@ extension CottageState {
         isCustomActionRunning = false
     }
 
+    func refreshBuiltInSettingsPanelLanguage() {
+        guard isBuiltInSettingsPanelActive else {
+            return
+        }
+
+        if isBuiltInSettingsExportPanelActive {
+            activeCustomAction = settingsExportCustomAction()
+        } else if let categoryID = activeSettingsCategoryID(),
+                  let category = SettingsCategory(rawValue: categoryID) {
+            activeCustomAction = settingsCategoryCustomAction(category)
+        } else {
+            activeCustomAction = settingsRootCustomAction()
+        }
+
+        refreshBuiltInSettingsResults()
+    }
+
     func builtInSettingsNavigationAction(
         from result: CustomActionResult,
         baseAction: CustomAction

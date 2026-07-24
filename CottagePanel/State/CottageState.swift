@@ -88,6 +88,15 @@ final class CottageState: ObservableObject {
         }
     }
 
+    @Published var appLanguage: CottageLanguage {
+        didSet {
+            L10n.language = appLanguage
+            saveSettings()
+            reloadActions()
+            refreshBuiltInSettingsPanelLanguage()
+        }
+    }
+
     @Published var keyboardOnlyModeEnabled: Bool {
         didSet {
             saveSettings()
@@ -144,6 +153,8 @@ final class CottageState: ObservableObject {
         confirmsDestructiveActions = settings.confirmsDestructiveActions
         restoresPanelSession = settings.restoresPanelSession
         panelSessionRestoreSeconds = settings.panelSessionRestoreSeconds
+        appLanguage = settings.appLanguage
+        L10n.language = settings.appLanguage
         keyboardOnlyModeEnabled = settings.keyboardOnlyModeEnabled
         panelNavigationScheme = settings.panelNavigationScheme
         menuNavigationScheme = settings.menuNavigationScheme
@@ -290,6 +301,7 @@ extension CottageState {
             confirmsDestructiveActions: confirmsDestructiveActions,
             restoresPanelSession: restoresPanelSession,
             panelSessionRestoreSeconds: panelSessionRestoreSeconds,
+            appLanguage: appLanguage,
             keyboardOnlyModeEnabled: keyboardOnlyModeEnabled,
             panelNavigationScheme: panelNavigationScheme,
             menuNavigationScheme: menuNavigationScheme,

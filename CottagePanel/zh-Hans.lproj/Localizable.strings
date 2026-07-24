@@ -42,6 +42,10 @@
 "settings.confirmDestructiveActions" = "危险操作前确认";
 "settings.restorePanelSession" = "恢复最近面板现场";
 "settings.restorePanelSeconds" = "恢复窗口：%d 秒";
+"settings.language" = "语言";
+"settings.language.system" = "跟随系统";
+"settings.language.english" = "英文";
+"settings.language.simplifiedChinese" = "简体中文";
 "settings.togglePanelShortcut" = "唤起面板快捷键";
 "settings.config.section" = "配置";
 "settings.openConfig" = "打开 ~/.config/cottage/";
@@ -254,7 +258,7 @@
 "settings.panelAction.toggleHelp" = "按 Return 切换这个设置。";
 "settings.panelAction.cycleSubtitle" = "按 Return 循环切换值";
 "settings.panelAction.cycleHelp" = "连续按 Return 选择下一个值。";
-"settings.panelAction.panel.subtitle" = "面板尺寸、启动行为、现场恢复";
+"settings.panelAction.panel.subtitle" = "面板尺寸、语言、启动行为、现场恢复";
 "settings.panelAction.actions.subtitle" = "配置目录、重载、导入、导出";
 "settings.panelAction.shortcuts.subtitle" = "快捷键概览和重置";
 "settings.panelAction.keyboard.subtitle" = "纯键盘导航和预览控制";

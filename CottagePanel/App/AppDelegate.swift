@@ -125,7 +125,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         if matches(event, .showActionMenu) {
             cancelCommandHints()
-            state.showActionsForSelection()
+            state.showActionMenuShortcut()
             return true
         }
 

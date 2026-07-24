@@ -78,6 +78,8 @@ private extension CottageState {
         direction: CottageSettingAdjustmentDirection
     ) -> Bool {
         switch command {
+        case "cottage-settings:cycle:appLanguage":
+            appLanguage = adjusted(appLanguage, direction: direction)
         case "cottage-settings:cycle:panelNavigationScheme":
             panelNavigationScheme = adjusted(panelNavigationScheme, direction: direction)
         case "cottage-settings:cycle:menuNavigationScheme":

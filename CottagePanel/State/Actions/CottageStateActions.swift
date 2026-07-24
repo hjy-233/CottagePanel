@@ -35,6 +35,18 @@ extension CottageState {
         keyboardContext = .actionMenu
     }
 
+    func showActionMenuShortcut() {
+        if activeCustomAction != nil {
+            showsActionPalette = false
+            shownCustomResultMenuID = nil
+            showsAppMenu = true
+            keyboardContext = .actionMenu
+            return
+        }
+
+        showActionsForSelection()
+    }
+
     func hideActionPalette() {
         showsActionPalette = false
         shownCustomResultMenuID = nil

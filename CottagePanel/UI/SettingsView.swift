@@ -27,6 +27,11 @@ struct SettingsView: View {
                     )
                 }
                 .disabled(!state.restoresPanelSession)
+                Picker(L10n.text("settings.language"), selection: $state.appLanguage) {
+                    ForEach(CottageLanguage.allCases) { language in
+                        Text(language.title).tag(language)
+                    }
+                }
                 KeyboardShortcuts.Recorder(
                     L10n.text("settings.togglePanelShortcut"),
                     name: .togglePanel
