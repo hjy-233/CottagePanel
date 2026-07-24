@@ -8,6 +8,7 @@ This document describes Cottage custom action API v1.
 - [Project README](README.en.md)
 - [Manifest](#manifest)
 - [Input Protocol](#input-protocol)
+- [Dropped Input](#dropped-input)
 - [Output Protocol](#output-protocol)
 - [Menus And Shortcuts](#menus-and-shortcuts)
 - [Forms](#forms)
@@ -98,6 +99,25 @@ Important information:
 - `password` and `textarea` fields are sent through stdin JSON only, not `COTTAGE_FORM_*`.
 - Form field IDs are uppercased for env vars, and `-` becomes `_`.
 - `my-field` and `my_field` collide after normalization and invalidate the action.
+
+### Dropped Input
+
+`input` can declare whether the action accepts dropped content:
+
+```json
+"input": {
+  "acceptsDroppedText": true,
+  "acceptsDroppedFiles": true,
+  "acceptedContentTypes": ["public.text", "public.file-url"]
+}
+```
+
+- `acceptsDroppedText`: writes dropped text into `query`.
+- `acceptsDroppedFiles`: writes dropped file paths into `query`, separated by newlines.
+- `acceptedContentTypes`: developer-facing declaration for docs and future validation; v1 currently handles text and file URLs only.
+- `form.fields[].acceptsDroppedContent`: controls whether a form field accepts dropped content; `text`, `textarea`, `file`, and `folder` default to `true`.
+- Dropped text fills the first accepting `text` / `textarea` field; dropped files fill the first accepting `file` / `folder` field.
+- `password` fields do not accept drops by default and are not saved in query history.
 
 ## Output Protocol
 

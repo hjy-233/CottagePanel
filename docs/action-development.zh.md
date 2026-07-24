@@ -8,6 +8,7 @@
 - [项目 README](../README.md)
 - [Manifest](#manifest)
 - [输入协议](#输入协议)
+- [拖入输入](#拖入输入)
 - [输出协议](#输出协议)
 - [菜单与快捷键](#菜单与快捷键)
 - [表单](#表单)
@@ -98,6 +99,25 @@ Cottage 会把完整输入写入脚本 stdin，格式是 JSON：
 - `password` 和 `textarea` 默认只通过 stdin JSON 传递，不注入 `COTTAGE_FORM_*`。
 - form field ID 注入环境变量时会转大写，并把 `-` 转成 `_`。
 - `my-field` 和 `my_field` 规范化后冲突，会导致 action 校验失败。
+
+### 拖入输入
+
+`input` 可以声明当前 action 是否接受拖入内容：
+
+```json
+"input": {
+  "acceptsDroppedText": true,
+  "acceptsDroppedFiles": true,
+  "acceptedContentTypes": ["public.text", "public.file-url"]
+}
+```
+
+- `acceptsDroppedText`: 允许把拖入文本写入 `query`。
+- `acceptsDroppedFiles`: 允许把拖入文件路径写入 `query`，多个路径用换行分隔。
+- `acceptedContentTypes`: 开发者声明用途，v1 用于文档和未来校验；当前只处理文本和文件 URL。
+- `form.fields[].acceptsDroppedContent`: 表单字段是否接受拖入；默认 `text`、`textarea`、`file`、`folder` 为 `true`。
+- 表单拖入文本会写入第一个可接收的 `text` / `textarea` 字段；拖入文件会写入第一个可接收的 `file` / `folder` 字段。
+- `password` 字段不会默认接受拖入，也不会被查询历史记录。
 
 ## 输出协议
 
