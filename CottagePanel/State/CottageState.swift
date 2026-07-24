@@ -5,6 +5,9 @@ import SwiftUI
 final class CottageState: ObservableObject {
     @Published var query = "" {
         didSet {
+            if normalizeQueryChipIfNeeded() {
+                return
+            }
             selectFirstIfNeeded()
         }
     }
@@ -97,6 +100,27 @@ final class CottageState: ObservableObject {
         }
     }
 
+    @Published var fuzzySearchEnabled: Bool {
+        didSet {
+            saveSettings()
+        }
+    }
+
+    @Published var queryChipsEnabled: Bool {
+        didSet {
+            if !queryChipsEnabled {
+                queryChip = nil
+            }
+            saveSettings()
+        }
+    }
+
+    @Published var droppedInputEnabled: Bool {
+        didSet {
+            saveSettings()
+        }
+    }
+
     @Published var keyboardOnlyModeEnabled: Bool {
         didSet {
             saveSettings()
@@ -139,6 +163,8 @@ final class CottageState: ObservableObject {
     var isRestoringCustomPanelCache = false
     var statusWorkItem: DispatchWorkItem?
     var questionNumberWorkItem: DispatchWorkItem?
+    var isApplyingQueryChip = false
+    @Published var queryChip: CottageQueryChip?
     private var executionCounts: [String: Int]
     private var recentExecutionIDs: [String]
     lazy var actions: [CottageAction] = sortedActions(builtInActions + applicationActionCache + customActions())
@@ -155,6 +181,9 @@ final class CottageState: ObservableObject {
         panelSessionRestoreSeconds = settings.panelSessionRestoreSeconds
         appLanguage = settings.appLanguage
         L10n.language = settings.appLanguage
+        fuzzySearchEnabled = settings.fuzzySearchEnabled
+        queryChipsEnabled = settings.queryChipsEnabled
+        droppedInputEnabled = settings.droppedInputEnabled
         keyboardOnlyModeEnabled = settings.keyboardOnlyModeEnabled
         panelNavigationScheme = settings.panelNavigationScheme
         menuNavigationScheme = settings.menuNavigationScheme
@@ -176,22 +205,37 @@ extension CottageState {
     }
 
     var filteredActions: [CottageAction] {
+        if let queryChip {
+            switch queryChip.kind {
+            case let .action(actionID):
+                if let action = actions.first(where: { $0.id == actionID }) {
+                    return [action]
+                }
+            case .scope:
+                break
+            }
+        }
+
         let parsedQuery = CottageActionQuery(query)
-        guard !parsedQuery.text.isEmpty else {
+        let queryScope = queryChip?.scope ?? parsedQuery.scope
+        let queryText = parsedQuery.text
+        guard !queryText.isEmpty else {
             return visibleActions(sortedActions(actions))
         }
 
-        let initials = normalizedSearchText(parsedQuery.text)
+        let initials = normalizedSearchText(queryText)
         return visibleActions(sortedActions(actions.filter { action in
-            switch parsedQuery.scope {
+            switch queryScope {
             case .all:
-                return action.matches(parsedQuery.text, initials: initials)
+                return action.matches(queryText, initials: initials, allowsFuzzy: fuzzySearchEnabled)
             case .actions:
-                return action.kind != .application && action.matches(parsedQuery.text, initials: initials)
+                return action.kind != .application
+                    && action.matches(queryText, initials: initials, allowsFuzzy: fuzzySearchEnabled)
             case .applications:
-                return action.kind == .application && action.matches(parsedQuery.text, initials: initials)
+                return action.kind == .application
+                    && action.matches(queryText, initials: initials, allowsFuzzy: fuzzySearchEnabled)
             case .tags:
-                return action.matchesTagOnly(parsedQuery.text)
+                return action.matchesTagOnly(queryText)
             }
         }))
     }
@@ -212,6 +256,7 @@ extension CottageState {
         ensureConfigDirectory()
         reloadActions()
         query = ""
+        queryChip = nil
         leaveCustomPanel()
         closeCustomPopup()
         showsActionPalette = false
@@ -302,6 +347,9 @@ extension CottageState {
             restoresPanelSession: restoresPanelSession,
             panelSessionRestoreSeconds: panelSessionRestoreSeconds,
             appLanguage: appLanguage,
+            fuzzySearchEnabled: fuzzySearchEnabled,
+            queryChipsEnabled: queryChipsEnabled,
+            droppedInputEnabled: droppedInputEnabled,
             keyboardOnlyModeEnabled: keyboardOnlyModeEnabled,
             panelNavigationScheme: panelNavigationScheme,
             menuNavigationScheme: menuNavigationScheme,
@@ -319,72 +367,4 @@ extension CottageState {
         }
     }
 
-}
-
-func openHomePath(_ path: String) {
-    let url = FileManager.default.homeDirectoryForCurrentUser
-        .appendingPathComponent(path)
-    NSWorkspace.shared.open(url)
-}
-
-func openURL(_ string: String) {
-    guard let url = URL(string: string) else {
-        return
-    }
-
-    NSWorkspace.shared.open(url)
-}
-
-func normalizedSearchText(_ text: String) -> String {
-    text
-        .lowercased()
-        .filter { $0.isLetter || $0.isNumber }
-}
-
-extension CottageState {
-    func openConfigDirectory() {
-        ensureConfigDirectory()
-        NSWorkspace.shared.open(configDirectory)
-    }
-}
-
-func searchInitials(from text: String) -> String {
-    var initials = ""
-    var isInsideWord = false
-
-    for character in text {
-        if character.isHan {
-            initials.append(transliteratedInitial(from: character))
-            isInsideWord = false
-        } else if character.isLetter || character.isNumber {
-            if !isInsideWord {
-                initials.append(String(character).lowercased())
-                isInsideWord = true
-            }
-        } else {
-            isInsideWord = false
-        }
-    }
-
-    return initials
-}
-
-private func transliteratedInitial(from character: Character) -> String {
-    let mutableText = NSMutableString(string: String(character))
-    CFStringTransform(mutableText, nil, kCFStringTransformToLatin, false)
-    CFStringTransform(mutableText, nil, kCFStringTransformStripCombiningMarks, false)
-
-    return (mutableText as String)
-        .first(where: { $0.isLetter || $0.isNumber })
-        .map { String($0).lowercased() } ?? ""
-}
-
-private extension Character {
-    var isHan: Bool {
-        unicodeScalars.contains { value in
-            (0x4E00...0x9FFF).contains(value.value)
-                || (0x3400...0x4DBF).contains(value.value)
-                || (0x20000...0x2A6DF).contains(value.value)
-        }
-    }
 }

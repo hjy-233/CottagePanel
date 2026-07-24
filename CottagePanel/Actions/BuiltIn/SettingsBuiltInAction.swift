@@ -288,7 +288,7 @@ extension CottageState {
 
         let initials = normalizedSearchText(trimmedQuery)
         return items
-            .filter { $0.matches(trimmedQuery, initials: initials) }
+            .filter { $0.matches(trimmedQuery, initials: initials, allowsFuzzy: fuzzySearchEnabled) }
             .map(\.result)
     }
 

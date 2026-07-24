@@ -45,13 +45,45 @@ struct ContentView: View {
 
     private var searchHeader: some View {
         HStack(spacing: 10) {
+            if let chip = state.queryChip, state.activeCustomAction == nil {
+                Button {
+                    state.removeQueryChip()
+                } label: {
+                    HStack(spacing: 5) {
+                        Image(systemName: "line.3.horizontal.decrease.circle")
+                        Text(chip.title)
+                            .lineLimit(1)
+                    }
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 5)
+                    .background(.quaternary, in: Capsule())
+                }
+                .buttonStyle(.plain)
+            }
+
             CustomSearchField(
                 text: state.activeCustomAction == nil ? $state.query : $state.customQuery,
                 placeholder: state.searchPlaceholder,
-                focusTrigger: state.searchFocusTrigger
-            ) {
-                state.runSelection()
-            }
+                focusTrigger: state.searchFocusTrigger,
+                onBackspaceWhenEmpty: {
+                    state.handleSearchBackspaceWhenEmpty()
+                },
+                onMoveDownWhenEmpty: {
+                    state.moveSelection(.down)
+                    return true
+                },
+                onDropText: { text in
+                    state.acceptDroppedText(text)
+                },
+                onDropFiles: { urls in
+                    state.acceptDroppedFiles(urls)
+                },
+                onSubmit: {
+                    state.runSelection()
+                }
+            )
 
             if let accessory = state.activeCustomAction?.definition.searchAccessory,
                !accessory.items.isEmpty {

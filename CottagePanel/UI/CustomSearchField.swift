@@ -6,6 +6,30 @@ struct CustomSearchField: NSViewRepresentable {
     let placeholder: String
     let focusTrigger: Int
     let onSubmit: () -> Void
+    let onBackspaceWhenEmpty: () -> Bool
+    let onMoveDownWhenEmpty: () -> Bool
+    let onDropText: (String) -> Bool
+    let onDropFiles: ([URL]) -> Bool
+
+    init(
+        text: Binding<String>,
+        placeholder: String,
+        focusTrigger: Int,
+        onBackspaceWhenEmpty: @escaping () -> Bool = { false },
+        onMoveDownWhenEmpty: @escaping () -> Bool = { false },
+        onDropText: @escaping (String) -> Bool = { _ in false },
+        onDropFiles: @escaping ([URL]) -> Bool = { _ in false },
+        onSubmit: @escaping () -> Void
+    ) {
+        _text = text
+        self.placeholder = placeholder
+        self.focusTrigger = focusTrigger
+        self.onBackspaceWhenEmpty = onBackspaceWhenEmpty
+        self.onMoveDownWhenEmpty = onMoveDownWhenEmpty
+        self.onDropText = onDropText
+        self.onDropFiles = onDropFiles
+        self.onSubmit = onSubmit
+    }
 
     func makeNSView(context: Context) -> NSTextField {
         let textField = SearchTextField()
@@ -20,6 +44,8 @@ struct CustomSearchField: NSViewRepresentable {
         textField.isEditable = true
         textField.isSelectable = true
         textField.lineBreakMode = .byTruncatingTail
+        textField.onDropText = context.coordinator.handleDroppedText
+        textField.onDropFiles = context.coordinator.handleDroppedFiles
         textField.placeholderAttributedString = placeholderString
         textField.stringValue = text
         return textField
@@ -35,6 +61,14 @@ struct CustomSearchField: NSViewRepresentable {
         }
         context.coordinator.text = $text
         context.coordinator.onSubmit = onSubmit
+        context.coordinator.onBackspaceWhenEmpty = onBackspaceWhenEmpty
+        context.coordinator.onMoveDownWhenEmpty = onMoveDownWhenEmpty
+        context.coordinator.onDropText = onDropText
+        context.coordinator.onDropFiles = onDropFiles
+        if let searchTextField = textField as? SearchTextField {
+            searchTextField.onDropText = context.coordinator.handleDroppedText
+            searchTextField.onDropFiles = context.coordinator.handleDroppedFiles
+        }
 
         if context.coordinator.lastFocusTrigger != focusTrigger {
             context.coordinator.lastFocusTrigger = focusTrigger
@@ -51,12 +85,20 @@ struct CustomSearchField: NSViewRepresentable {
     final class Coordinator: NSObject, NSTextFieldDelegate {
         var text: Binding<String>
         var onSubmit: () -> Void
+        var onBackspaceWhenEmpty: () -> Bool
+        var onMoveDownWhenEmpty: () -> Bool
+        var onDropText: (String) -> Bool
+        var onDropFiles: ([URL]) -> Bool
         var placeholder: String
         var lastFocusTrigger = 0
 
         init(text: Binding<String>, onSubmit: @escaping () -> Void, placeholder: String) {
             self.text = text
             self.onSubmit = onSubmit
+            self.onBackspaceWhenEmpty = { false }
+            self.onMoveDownWhenEmpty = { false }
+            self.onDropText = { _ in false }
+            self.onDropFiles = { _ in false }
             self.placeholder = placeholder
         }
 
@@ -73,12 +115,31 @@ struct CustomSearchField: NSViewRepresentable {
             textView: NSTextView,
             doCommandBy commandSelector: Selector
         ) -> Bool {
-            guard commandSelector == #selector(NSResponder.insertNewline(_:)) else {
+            switch commandSelector {
+            case #selector(NSResponder.insertNewline(_:)):
+                onSubmit()
+                return true
+            case #selector(NSResponder.deleteBackward(_:)):
+                guard textView.string.isEmpty else {
+                    return false
+                }
+                return onBackspaceWhenEmpty()
+            case #selector(NSResponder.moveDown(_:)):
+                guard textView.string.isEmpty else {
+                    return false
+                }
+                return onMoveDownWhenEmpty()
+            default:
                 return false
             }
+        }
 
-            onSubmit()
-            return true
+        func handleDroppedText(_ text: String) -> Bool {
+            onDropText(text)
+        }
+
+        func handleDroppedFiles(_ urls: [URL]) -> Bool {
+            onDropFiles(urls)
         }
     }
 
@@ -94,8 +155,44 @@ struct CustomSearchField: NSViewRepresentable {
 }
 
 final class SearchTextField: NSTextField {
+    var onDropText: ((String) -> Bool)?
+    var onDropFiles: (([URL]) -> Bool)?
+
+    override init(frame frameRect: NSRect) {
+        super.init(frame: frameRect)
+        registerForDraggedTypes([.string, .fileURL])
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        registerForDraggedTypes([.string, .fileURL])
+    }
+
     override var intrinsicContentSize: NSSize {
         NSSize(width: NSView.noIntrinsicMetric, height: 30)
+    }
+
+    override func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
+        canReadDrop(from: sender.draggingPasteboard) ? .copy : []
+    }
+
+    override func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
+        let pasteboard = sender.draggingPasteboard
+        if let urls = pasteboard.readObjects(forClasses: [NSURL.self], options: nil) as? [URL],
+           !urls.isEmpty {
+            return onDropFiles?(urls) ?? false
+        }
+
+        if let text = pasteboard.string(forType: .string) {
+            return onDropText?(text) ?? false
+        }
+
+        return false
+    }
+
+    private func canReadDrop(from pasteboard: NSPasteboard) -> Bool {
+        pasteboard.canReadObject(forClasses: [NSURL.self], options: nil)
+            || pasteboard.string(forType: .string) != nil
     }
 }
 

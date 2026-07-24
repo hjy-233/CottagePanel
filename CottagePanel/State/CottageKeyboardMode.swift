@@ -65,6 +65,7 @@ enum CottageMenuKeyboardCommand {
     case enter
     case moveLeft
     case moveRight
+    case backspace
     case escape
 }
 

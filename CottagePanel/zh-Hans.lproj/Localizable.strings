@@ -1,4 +1,7 @@
 "search.placeholder" = "搜索应用和命令...";
+"queryChip.actions" = "动作";
+"queryChip.apps" = "应用";
+"queryChip.tags" = "标签";
 "footer.appName" = "Cottage";
 "footer.select" = "选择";
 "footer.run" = "执行";
@@ -43,6 +46,9 @@
 "settings.restorePanelSession" = "恢复最近面板现场";
 "settings.restorePanelSeconds" = "恢复窗口：%d 秒";
 "settings.language" = "语言";
+"settings.fuzzySearch" = "启用模糊搜索";
+"settings.queryChips" = "启用 /action 查询 Chip";
+"settings.droppedInput" = "允许拖入内容作为输入";
 "settings.language.system" = "跟随系统";
 "settings.language.english" = "英文";
 "settings.language.simplifiedChinese" = "简体中文";

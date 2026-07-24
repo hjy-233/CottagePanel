@@ -9,6 +9,9 @@ struct CottageSettings: Codable {
     var restoresPanelSession: Bool
     var panelSessionRestoreSeconds: Double
     var appLanguage: CottageLanguage
+    var fuzzySearchEnabled: Bool
+    var queryChipsEnabled: Bool
+    var droppedInputEnabled: Bool
     var keyboardOnlyModeEnabled: Bool
     var panelNavigationScheme: CottageKeyboardNavigationScheme
     var menuNavigationScheme: CottageKeyboardNavigationScheme
@@ -26,6 +29,9 @@ struct CottageSettings: Codable {
         restoresPanelSession: true,
         panelSessionRestoreSeconds: 30,
         appLanguage: .system,
+        fuzzySearchEnabled: true,
+        queryChipsEnabled: true,
+        droppedInputEnabled: true,
         keyboardOnlyModeEnabled: true,
         panelNavigationScheme: .arrows,
         menuNavigationScheme: .arrows,
@@ -44,6 +50,9 @@ struct CottageSettings: Codable {
         restoresPanelSession: Bool,
         panelSessionRestoreSeconds: Double,
         appLanguage: CottageLanguage,
+        fuzzySearchEnabled: Bool,
+        queryChipsEnabled: Bool,
+        droppedInputEnabled: Bool,
         keyboardOnlyModeEnabled: Bool,
         panelNavigationScheme: CottageKeyboardNavigationScheme,
         menuNavigationScheme: CottageKeyboardNavigationScheme,
@@ -60,6 +69,9 @@ struct CottageSettings: Codable {
         self.restoresPanelSession = restoresPanelSession
         self.panelSessionRestoreSeconds = panelSessionRestoreSeconds
         self.appLanguage = appLanguage
+        self.fuzzySearchEnabled = fuzzySearchEnabled
+        self.queryChipsEnabled = queryChipsEnabled
+        self.droppedInputEnabled = droppedInputEnabled
         self.keyboardOnlyModeEnabled = keyboardOnlyModeEnabled
         self.panelNavigationScheme = panelNavigationScheme
         self.menuNavigationScheme = menuNavigationScheme
@@ -85,6 +97,12 @@ struct CottageSettings: Codable {
             ?? Self.defaults.panelSessionRestoreSeconds
         appLanguage = try container.decodeIfPresent(CottageLanguage.self, forKey: .appLanguage)
             ?? Self.defaults.appLanguage
+        fuzzySearchEnabled = try container.decodeIfPresent(Bool.self, forKey: .fuzzySearchEnabled)
+            ?? Self.defaults.fuzzySearchEnabled
+        queryChipsEnabled = try container.decodeIfPresent(Bool.self, forKey: .queryChipsEnabled)
+            ?? Self.defaults.queryChipsEnabled
+        droppedInputEnabled = try container.decodeIfPresent(Bool.self, forKey: .droppedInputEnabled)
+            ?? Self.defaults.droppedInputEnabled
         keyboardOnlyModeEnabled = try container.decodeIfPresent(Bool.self, forKey: .keyboardOnlyModeEnabled)
             ?? Self.defaults.keyboardOnlyModeEnabled
         panelNavigationScheme = try container.decodeIfPresent(
@@ -183,6 +201,9 @@ enum CottageSettingsStore {
             restoresPanelSession: CottageSettings.defaults.restoresPanelSession,
             panelSessionRestoreSeconds: CottageSettings.defaults.panelSessionRestoreSeconds,
             appLanguage: CottageSettings.defaults.appLanguage,
+            fuzzySearchEnabled: CottageSettings.defaults.fuzzySearchEnabled,
+            queryChipsEnabled: CottageSettings.defaults.queryChipsEnabled,
+            droppedInputEnabled: CottageSettings.defaults.droppedInputEnabled,
             keyboardOnlyModeEnabled: CottageSettings.defaults.keyboardOnlyModeEnabled,
             panelNavigationScheme: CottageSettings.defaults.panelNavigationScheme,
             menuNavigationScheme: CottageSettings.defaults.menuNavigationScheme,

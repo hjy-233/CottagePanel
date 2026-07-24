@@ -203,6 +203,11 @@ struct CottageMenu: View {
                 return
             }
             openSubmenu(selectedItem)
+        case .backspace:
+            if !submenuStack.isEmpty {
+                _ = submenuStack.popLast()
+                selectFirstItemIfNeeded()
+            }
         case .escape:
             onDismiss?()
         }

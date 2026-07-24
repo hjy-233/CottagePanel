@@ -44,7 +44,7 @@ extension CottageState {
                 command: "cottage-settings:step:panelHeight",
                 tags: ["panel", "height"]
             )
-        ]
+        ] + inputSettingsItems()
     }
 
     func actionSettingsItems() -> [SettingsPanelItem] {
@@ -146,6 +146,32 @@ extension CottageState {
 }
 
 private extension CottageState {
+    func inputSettingsItems() -> [SettingsPanelItem] {
+        [
+            toggleItem(
+                id: "fuzzy-search",
+                titleKey: "settings.fuzzySearch",
+                value: fuzzySearchEnabled,
+                command: "cottage-settings:toggle:fuzzySearchEnabled",
+                tags: ["search", "fuzzy"]
+            ),
+            toggleItem(
+                id: "query-chips",
+                titleKey: "settings.queryChips",
+                value: queryChipsEnabled,
+                command: "cottage-settings:toggle:queryChipsEnabled",
+                tags: ["search", "chip", "slash"]
+            ),
+            toggleItem(
+                id: "dropped-input",
+                titleKey: "settings.droppedInput",
+                value: droppedInputEnabled,
+                command: "cottage-settings:toggle:droppedInputEnabled",
+                tags: ["drag", "drop", "input"]
+            )
+        ]
+    }
+
     func restoreSecondsItem() -> SettingsPanelItem {
         stepItem(
             id: "restore-panel-seconds",

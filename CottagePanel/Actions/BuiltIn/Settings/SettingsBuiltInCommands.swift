@@ -34,6 +34,12 @@ private extension CottageState {
             opensPanelOnLaunch.toggle()
         case "cottage-settings:toggle:restoresPanelSession":
             restoresPanelSession.toggle()
+        case "cottage-settings:toggle:fuzzySearchEnabled":
+            fuzzySearchEnabled.toggle()
+        case "cottage-settings:toggle:queryChipsEnabled":
+            queryChipsEnabled.toggle()
+        case "cottage-settings:toggle:droppedInputEnabled":
+            droppedInputEnabled.toggle()
         case "cottage-settings:toggle:keyboardOnlyModeEnabled":
             keyboardOnlyModeEnabled.toggle()
         case "cottage-settings:toggle:confirmsDestructiveActions":

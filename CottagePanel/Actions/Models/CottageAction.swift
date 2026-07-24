@@ -47,11 +47,42 @@ struct CottageAction: Identifiable, Hashable {
         hasher.combine(id)
     }
 
-    func matches(_ text: String, initials: String) -> Bool {
-        title.localizedCaseInsensitiveContains(text)
+    func matches(_ text: String, initials: String, allowsFuzzy: Bool = false) -> Bool {
+        let exactMatch = title.localizedCaseInsensitiveContains(text)
             || subtitle.localizedCaseInsensitiveContains(text)
             || tags.contains { $0.localizedCaseInsensitiveContains(text) }
             || (!initials.isEmpty && searchInitials(from: title).hasPrefix(initials))
             || (!initials.isEmpty && searchInitials(from: subtitle).hasPrefix(initials))
+        guard !exactMatch, allowsFuzzy else {
+            return exactMatch
+        }
+
+        return fuzzySearchMatches(text, in: [title, subtitle] + tags)
     }
+}
+
+func fuzzySearchMatches(_ query: String, in candidates: [String]) -> Bool {
+    let normalizedQuery = normalizedSearchText(query)
+    guard !normalizedQuery.isEmpty else {
+        return true
+    }
+
+    return candidates.contains { candidate in
+        normalizedTextContainsFuzzyQuery(normalizedSearchText(candidate), query: normalizedQuery)
+    }
+}
+
+private func normalizedTextContainsFuzzyQuery(_ text: String, query: String) -> Bool {
+    guard query.count <= text.count else {
+        return false
+    }
+
+    var index = text.startIndex
+    for character in query {
+        guard let matchIndex = text[index...].firstIndex(of: character) else {
+            return false
+        }
+        index = text.index(after: matchIndex)
+    }
+    return true
 }

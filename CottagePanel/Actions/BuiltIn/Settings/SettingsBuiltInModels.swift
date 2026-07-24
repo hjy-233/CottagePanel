@@ -32,12 +32,17 @@ struct SettingsPanelItem {
         )
     }
 
-    func matches(_ query: String, initials: String) -> Bool {
-        title.localizedCaseInsensitiveContains(query)
+    func matches(_ query: String, initials: String, allowsFuzzy: Bool = false) -> Bool {
+        let exactMatch = title.localizedCaseInsensitiveContains(query)
             || subtitle.localizedCaseInsensitiveContains(query)
             || text.localizedCaseInsensitiveContains(query)
             || tags.contains { $0.localizedCaseInsensitiveContains(query) }
             || (!initials.isEmpty && searchInitials(from: title).hasPrefix(initials))
+        guard !exactMatch, allowsFuzzy else {
+            return exactMatch
+        }
+
+        return fuzzySearchMatches(query, in: [title, subtitle, text] + tags)
     }
 }
 

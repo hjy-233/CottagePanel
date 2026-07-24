@@ -44,6 +44,10 @@ extension AppDelegate {
             state.showsAppMenu = false
             return true
         }
+        if event.keyCode == 51 {
+            postMenuCommand(.backspace)
+            return true
+        }
         return handleMenuNavigation(event)
     }
 

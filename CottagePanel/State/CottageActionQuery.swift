@@ -1,7 +1,7 @@
 import Foundation
 
 struct CottageActionQuery {
-    enum Scope {
+    enum Scope: Equatable {
         case all
         case actions
         case applications

@@ -1,4 +1,7 @@
 "search.placeholder" = "Search apps and commands...";
+"queryChip.actions" = "Actions";
+"queryChip.apps" = "Apps";
+"queryChip.tags" = "Tags";
 "footer.appName" = "Cottage";
 "footer.select" = "Select";
 "footer.run" = "Run";
@@ -43,6 +46,9 @@
 "settings.restorePanelSession" = "Restore recent panel state";
 "settings.restorePanelSeconds" = "Restore window: %d seconds";
 "settings.language" = "Language";
+"settings.fuzzySearch" = "Enable fuzzy search";
+"settings.queryChips" = "Enable /action query chips";
+"settings.droppedInput" = "Allow dropped content as input";
 "settings.language.system" = "System";
 "settings.language.english" = "English";
 "settings.language.simplifiedChinese" = "Simplified Chinese";

@@ -76,6 +76,7 @@ struct CustomFormFieldDefinition: Codable, Hashable, Identifiable {
     let placeholder: String?
     let defaultValue: String?
     let required: Bool
+    let acceptsDroppedContent: Bool
     let items: [CustomPickerItemDefinition]
 
     init(from decoder: Decoder) throws {
@@ -86,6 +87,8 @@ struct CustomFormFieldDefinition: Codable, Hashable, Identifiable {
         placeholder = try container.decodeIfPresent(String.self, forKey: .placeholder)
         defaultValue = try container.decodeIfPresent(String.self, forKey: .defaultValue)
         required = try container.decodeIfPresent(Bool.self, forKey: .required) ?? false
+        acceptsDroppedContent = try container.decodeIfPresent(Bool.self, forKey: .acceptsDroppedContent)
+            ?? [.text, .textarea, .file, .folder].contains(type)
         items = try container.decodeIfPresent([CustomPickerItemDefinition].self, forKey: .items) ?? []
     }
 }
@@ -128,15 +131,35 @@ struct CustomActionInputDefinition: Codable, Hashable {
     let placeholder: String?
     let debounceMilliseconds: Int
     let allowsEmptyQuery: Bool
+    let acceptsDroppedText: Bool
+    let acceptsDroppedFiles: Bool
+    let acceptedContentTypes: [String]
 
     init(
         placeholder: String? = nil,
         debounceMilliseconds: Int = 300,
-        allowsEmptyQuery: Bool = true
+        allowsEmptyQuery: Bool = true,
+        acceptsDroppedText: Bool = true,
+        acceptsDroppedFiles: Bool = true,
+        acceptedContentTypes: [String] = ["public.text", "public.file-url"]
     ) {
         self.placeholder = placeholder
         self.debounceMilliseconds = debounceMilliseconds
         self.allowsEmptyQuery = allowsEmptyQuery
+        self.acceptsDroppedText = acceptsDroppedText
+        self.acceptsDroppedFiles = acceptsDroppedFiles
+        self.acceptedContentTypes = acceptedContentTypes
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        placeholder = try container.decodeIfPresent(String.self, forKey: .placeholder)
+        debounceMilliseconds = try container.decodeIfPresent(Int.self, forKey: .debounceMilliseconds) ?? 300
+        allowsEmptyQuery = try container.decodeIfPresent(Bool.self, forKey: .allowsEmptyQuery) ?? true
+        acceptsDroppedText = try container.decodeIfPresent(Bool.self, forKey: .acceptsDroppedText) ?? true
+        acceptsDroppedFiles = try container.decodeIfPresent(Bool.self, forKey: .acceptsDroppedFiles) ?? true
+        acceptedContentTypes = try container.decodeIfPresent([String].self, forKey: .acceptedContentTypes)
+            ?? ["public.text", "public.file-url"]
     }
 }
 
