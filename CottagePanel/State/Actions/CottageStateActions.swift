@@ -148,6 +148,7 @@ extension CottageState {
 
     func runSelection() {
         if activeCustomAction != nil {
+            recordRecentSearchNow()
             runCustomSelection()
             return
         }
@@ -161,6 +162,7 @@ extension CottageState {
             return
         }
 
+        recordRecentSearchNow()
         run(action)
     }
 

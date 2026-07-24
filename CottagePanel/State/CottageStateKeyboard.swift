@@ -76,6 +76,18 @@ extension CottageState {
             return false
         }
 
+        if let queryChip,
+           case let .action(actionID) = queryChip.kind,
+           let action = actions.first(where: { $0.id == actionID }) {
+            let input = query
+            recordRecentSearch(input: input, for: action)
+            self.queryChip = nil
+            query = ""
+            run(action)
+            applyQuickInput(input, to: action)
+            return true
+        }
+
         let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
         let normalized = normalizedSearchText(trimmed)
         if normalized == "settings" {
@@ -100,13 +112,14 @@ extension CottageState {
             return false
         }
 
+        recordRecentSearch(input: match.input, for: match.action)
         query = ""
         run(match.action)
         applyQuickInput(match.input, to: match.action)
         return true
     }
 
-    private func quickCommandMatch(_ command: String) -> (action: CottageAction, input: String)? {
+    func quickCommandMatch(_ command: String) -> (action: CottageAction, input: String)? {
         let trimmedCommand = command.trimmingCharacters(in: .whitespacesAndNewlines)
         let candidates = actions.compactMap { action -> (action: CottageAction, aliases: [String])? in
             guard let customAction = action.customAction else {

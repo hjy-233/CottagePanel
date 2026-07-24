@@ -9,6 +9,7 @@ final class CottageState: ObservableObject {
                 return
             }
             selectFirstIfNeeded()
+            scheduleRecentSearchCapture()
         }
     }
 
@@ -27,6 +28,7 @@ final class CottageState: ObservableObject {
     @Published var customQuery = "" {
         didSet {
             customQueryDidChange()
+            scheduleRecentSearchCapture()
         }
     }
     @Published var customResults: [CustomActionResult] = []
@@ -161,8 +163,10 @@ final class CottageState: ObservableObject {
     var customResultIndex = 0
     var customPanelCaches: [String: CustomPanelCache] = [:]
     var isRestoringCustomPanelCache = false
+    var isRestoringRecentSearch = false
     var statusWorkItem: DispatchWorkItem?
     var questionNumberWorkItem: DispatchWorkItem?
+    var recentSearchWorkItem: DispatchWorkItem?
     var isApplyingQueryChip = false
     @Published var queryChip: CottageQueryChip?
     private var executionCounts: [String: Int]

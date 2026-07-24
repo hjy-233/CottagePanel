@@ -5,6 +5,7 @@ extension CottageState {
     func updateSearchAccessory(_ value: String) {
         customAccessoryValue = value
         saveSearchAccessoryValue(value)
+        scheduleRecentSearchCapture()
         guard activeCustomAction?.definition.trigger == .live else {
             return
         }

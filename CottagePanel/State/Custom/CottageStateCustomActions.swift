@@ -146,6 +146,10 @@ extension CottageState {
             return
         }
 
+        if restoreRecentSearchResultIfNeeded(selectedCustomResult) {
+            return
+        }
+
         if pushNavigationIfNeeded(selectedCustomResult) {
             return
         }

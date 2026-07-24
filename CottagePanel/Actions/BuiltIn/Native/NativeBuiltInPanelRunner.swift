@@ -80,6 +80,7 @@ enum NativeBuiltInPanelActionID: String {
     case jsonFormatter = "built-in-json-formatter"
     case processManager = "built-in-process-manager"
     case qrCode = "built-in-qr-code"
+    case recentSearch = "built-in-recent-search"
     case translator = "built-in-translator"
     case unixTimeConverter = "built-in-unix-time-converter"
     case webSearch = "built-in-web-search"
@@ -128,6 +129,8 @@ enum NativeBuiltInPanelRunner {
             return try await NativeProcessManagerBuiltIn.results(query: query)
         case .qrCode:
             return try NativeQRCodeBuiltIn.results(query: query, codeType: accessoryValue)
+        case .recentSearch:
+            return NativeRecentSearchBuiltIn.results(query: query)
         case .translator:
             return try await NativeTranslatorBuiltIn.results(query: query, target: accessoryValue)
         case .unixTimeConverter:
