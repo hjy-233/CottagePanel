@@ -6,6 +6,7 @@ struct CottageSettings: Codable {
     var showsKeyboardHints: Bool
     var opensPanelOnLaunch: Bool
     var confirmsDestructiveActions: Bool
+    var detailedLogsEnabled: Bool
     var restoresPanelSession: Bool
     var panelSessionRestoreSeconds: Double
     var appLanguage: CottageLanguage
@@ -26,6 +27,7 @@ struct CottageSettings: Codable {
         showsKeyboardHints: true,
         opensPanelOnLaunch: false,
         confirmsDestructiveActions: true,
+        detailedLogsEnabled: false,
         restoresPanelSession: true,
         panelSessionRestoreSeconds: 30,
         appLanguage: .system,
@@ -47,6 +49,7 @@ struct CottageSettings: Codable {
         showsKeyboardHints: Bool,
         opensPanelOnLaunch: Bool,
         confirmsDestructiveActions: Bool,
+        detailedLogsEnabled: Bool,
         restoresPanelSession: Bool,
         panelSessionRestoreSeconds: Double,
         appLanguage: CottageLanguage,
@@ -66,6 +69,7 @@ struct CottageSettings: Codable {
         self.showsKeyboardHints = showsKeyboardHints
         self.opensPanelOnLaunch = opensPanelOnLaunch
         self.confirmsDestructiveActions = confirmsDestructiveActions
+        self.detailedLogsEnabled = detailedLogsEnabled
         self.restoresPanelSession = restoresPanelSession
         self.panelSessionRestoreSeconds = panelSessionRestoreSeconds
         self.appLanguage = appLanguage
@@ -91,6 +95,8 @@ struct CottageSettings: Codable {
             ?? Self.defaults.opensPanelOnLaunch
         confirmsDestructiveActions = try container.decodeIfPresent(Bool.self, forKey: .confirmsDestructiveActions)
             ?? Self.defaults.confirmsDestructiveActions
+        detailedLogsEnabled = try container.decodeIfPresent(Bool.self, forKey: .detailedLogsEnabled)
+            ?? Self.defaults.detailedLogsEnabled
         restoresPanelSession = try container.decodeIfPresent(Bool.self, forKey: .restoresPanelSession)
             ?? Self.defaults.restoresPanelSession
         panelSessionRestoreSeconds = try container.decodeIfPresent(Double.self, forKey: .panelSessionRestoreSeconds)
@@ -198,6 +204,7 @@ enum CottageSettingsStore {
                 ?? CottageSettings.defaults.showsKeyboardHints,
             opensPanelOnLaunch: defaults.bool(forKey: "opensPanelOnLaunch"),
             confirmsDestructiveActions: CottageSettings.defaults.confirmsDestructiveActions,
+            detailedLogsEnabled: CottageSettings.defaults.detailedLogsEnabled,
             restoresPanelSession: CottageSettings.defaults.restoresPanelSession,
             panelSessionRestoreSeconds: CottageSettings.defaults.panelSessionRestoreSeconds,
             appLanguage: CottageSettings.defaults.appLanguage,

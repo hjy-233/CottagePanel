@@ -72,25 +72,55 @@ enum CustomActionRunner {
             result: request.result,
             environmentOverrides: request.environmentOverrides
         ) else {
+            CottageLogStore.error("customAction.process.invalid", [
+                "actionID": request.customAction.definition.id,
+                "actionTitle": request.customAction.definition.title,
+                "type": request.customAction.definition.type.rawValue
+            ])
             return nil
         }
 
+        let logContext = makeLogContext(for: request, process: process)
+        let timeout = installProcessIO(
+            process: process,
+            logContext: logContext,
+            inputPayload: request.inputPayload,
+            handlers: handlers
+        )
+        return start(
+            process: process,
+            timeout: timeout,
+            timeoutInterval: request.timeoutInterval,
+            processID: request.processID,
+            logContext: logContext
+        )
+    }
+
+    private static func installProcessIO(
+        process: Process,
+        logContext: CustomActionLogContext,
+        inputPayload: CustomActionInputPayload?,
+        handlers: CustomActionProcessHandlers
+    ) -> DispatchWorkItem {
         let pipe = Pipe()
         let errorPipe = Pipe()
         let inputPipe = Pipe()
         let outputBuffer = CustomActionOutputBuffer()
-        let timeout = timeoutWorkItem(process: process, onError: handlers.onError)
+        let timeout = timeoutWorkItem(process: process, logContext: logContext, onError: handlers.onError)
 
         process.standardOutput = pipe
         process.standardError = errorPipe
         process.standardInput = inputPipe
-        CustomActionInputWriter.write(request.inputPayload, to: inputPipe)
+        CustomActionInputWriter.write(inputPayload, to: inputPipe)
         installOutputHandler(
             process: process,
             pipe: pipe,
-            outputBuffer: outputBuffer,
-            onLine: handlers.onLine,
-            onError: handlers.onError
+            context: CustomActionOutputContext(
+                outputBuffer: outputBuffer,
+                logContext: logContext,
+                onLine: handlers.onLine,
+                onError: handlers.onError
+            )
         )
         installTerminationHandler(
             process: process,
@@ -99,17 +129,27 @@ enum CustomActionRunner {
             context: CustomActionProcessContext(
                 outputBuffer: outputBuffer,
                 timeout: timeout,
+                logContext: logContext,
                 onLine: handlers.onLine,
                 onError: handlers.onError,
                 onCompletion: handlers.onCompletion
             )
         )
+        return timeout
+    }
 
-        return start(
-            process: process,
-            timeout: timeout,
-            timeoutInterval: request.timeoutInterval,
-            processID: request.processID
+    private static func makeLogContext(
+        for request: CustomActionProcessRequest,
+        process: Process
+    ) -> CustomActionLogContext {
+        CustomActionLogContext(
+            actionID: request.customAction.definition.id,
+            title: request.customAction.definition.title,
+            type: request.customAction.definition.type.rawValue,
+            query: request.query,
+            directory: request.customAction.directoryURL.path,
+            executable: process.executableURL?.path ?? "",
+            arguments: process.arguments?.joined(separator: " ") ?? ""
         )
     }
 
@@ -150,13 +190,13 @@ enum CustomActionRunner {
             }
         }
     }
+}
 
+private extension CustomActionRunner {
     private static func installOutputHandler(
         process: Process,
         pipe: Pipe,
-        outputBuffer: CustomActionOutputBuffer,
-        onLine: @escaping @MainActor (String) -> Void,
-        onError: @escaping @MainActor (String) -> Void
+        context: CustomActionOutputContext
     ) {
         pipe.fileHandleForReading.readabilityHandler = { handle in
             let data = handle.availableData
@@ -164,18 +204,22 @@ enum CustomActionRunner {
                 return
             }
 
-            let result = outputBuffer.append(chunk)
+            let result = context.outputBuffer.append(chunk)
             if let error = result.error {
+                CottageLogStore.error("customAction.output.error", context.logContext.fields([
+                    "error": error
+                ]))
                 process.terminate()
                 Task { @MainActor in
-                    onError(error)
+                    context.onError(error)
                 }
                 return
             }
 
             result.lines.forEach { line in
+                CottageLogStore.info("customAction.stdout", context.logContext.fields(["line": line]))
                 Task { @MainActor in
-                    onLine(line)
+                    context.onLine(line)
                 }
             }
         }
@@ -192,12 +236,16 @@ enum CustomActionRunner {
             errorPipe.fileHandleForReading.readabilityHandler = nil
             emitRemainingOutput(
                 context.outputBuffer,
+                logContext: context.logContext,
                 onLine: context.onLine,
                 onError: context.onError
             )
-            emitErrorOutput(errorPipe, onError: context.onError)
+            emitErrorOutput(errorPipe, logContext: context.logContext, onError: context.onError)
             Task { @MainActor in
                 context.timeout.cancel()
+                CottageLogStore.info("customAction.process.finish", context.logContext.fields([
+                    "status": "\(finishedProcess.terminationStatus)"
+                ]))
                 context.onCompletion(finishedProcess.terminationStatus)
             }
         }
@@ -205,11 +253,15 @@ enum CustomActionRunner {
 
     private static func emitRemainingOutput(
         _ outputBuffer: CustomActionOutputBuffer,
+        logContext: CustomActionLogContext,
         onLine: @escaping @MainActor (String) -> Void,
         onError: @escaping @MainActor (String) -> Void
     ) {
         let flushResult = outputBuffer.flush()
         if let error = flushResult.error {
+            CottageLogStore.error("customAction.output.error", logContext.fields([
+                "error": error
+            ]))
             Task { @MainActor in
                 onError(error)
             }
@@ -220,6 +272,7 @@ enum CustomActionRunner {
             return
         }
 
+        CottageLogStore.info("customAction.stdout", logContext.fields(["line": remaining]))
         Task { @MainActor in
             onLine(remaining)
         }
@@ -227,6 +280,7 @@ enum CustomActionRunner {
 
     private static func emitErrorOutput(
         _ errorPipe: Pipe,
+        logContext: CustomActionLogContext,
         onError: @escaping @MainActor (String) -> Void
     ) {
         let errorData = errorPipe.fileHandleForReading.readDataToEndOfFile()
@@ -234,6 +288,9 @@ enum CustomActionRunner {
             return
         }
 
+        CottageLogStore.error("customAction.stderr", logContext.fields([
+            "text": errorText
+        ]))
         Task { @MainActor in
             onError(errorText)
         }
@@ -241,6 +298,7 @@ enum CustomActionRunner {
 
     private static func timeoutWorkItem(
         process: Process,
+        logContext: CustomActionLogContext,
         onError: @escaping @MainActor (String) -> Void
     ) -> DispatchWorkItem {
         DispatchWorkItem {
@@ -249,6 +307,7 @@ enum CustomActionRunner {
             }
 
             process.terminate()
+            CottageLogStore.error("customAction.timeout", logContext.fields())
             Task { @MainActor in
                 onError(L10n.text("custom.result.timeout"))
             }
@@ -259,13 +318,20 @@ enum CustomActionRunner {
         process: Process,
         timeout: DispatchWorkItem,
         timeoutInterval: TimeInterval,
-        processID: UUID
+        processID: UUID,
+        logContext: CustomActionLogContext
     ) -> CustomActionProcess? {
         do {
+            CottageLogStore.info("customAction.process.start", logContext.fields([
+                "timeout": "\(timeoutInterval)"
+            ]))
             try process.run()
             DispatchQueue.global().asyncAfter(deadline: .now() + timeoutInterval, execute: timeout)
             return CustomActionProcess(id: processID, process: process, timeout: timeout)
         } catch {
+            CottageLogStore.error("customAction.process.startFailed", logContext.fields([
+                "error": error.localizedDescription
+            ]))
             NSLog("CottagePanel cannot run custom action: \(error.localizedDescription)")
             return nil
         }
@@ -275,7 +341,41 @@ enum CustomActionRunner {
 private struct CustomActionProcessContext {
     let outputBuffer: CustomActionOutputBuffer
     let timeout: DispatchWorkItem
+    let logContext: CustomActionLogContext
     let onLine: @MainActor (String) -> Void
     let onError: @MainActor (String) -> Void
     let onCompletion: @MainActor (Int32) -> Void
+}
+
+private struct CustomActionOutputContext {
+    let outputBuffer: CustomActionOutputBuffer
+    let logContext: CustomActionLogContext
+    let onLine: @MainActor (String) -> Void
+    let onError: @MainActor (String) -> Void
+}
+
+private struct CustomActionLogContext: Sendable {
+    let actionID: String
+    let title: String
+    let type: String
+    let query: String
+    let directory: String
+    let executable: String
+    let arguments: String
+
+    func fields(_ extraFields: [String: String] = [:]) -> [String: String] {
+        var fields = [
+            "actionID": actionID,
+            "actionTitle": title,
+            "type": type,
+            "query": query,
+            "directory": directory,
+            "executable": executable,
+            "arguments": arguments
+        ]
+        extraFields.forEach { key, value in
+            fields[key] = value
+        }
+        return fields
+    }
 }

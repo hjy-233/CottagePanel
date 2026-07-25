@@ -64,7 +64,7 @@ private func calculateCustomAction() -> CustomAction {
             menuActions: [copyPiMenuAction()],
             input: CustomActionInputDefinition(
                 placeholder: L10n.text("action.calculate.placeholder"),
-                debounceMilliseconds: 250,
+                debounceMilliseconds: 0,
                 allowsEmptyQuery: false
             )
         ),

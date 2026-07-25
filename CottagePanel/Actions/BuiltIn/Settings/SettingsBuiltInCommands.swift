@@ -44,6 +44,8 @@ private extension CottageState {
             keyboardOnlyModeEnabled.toggle()
         case "cottage-settings:toggle:confirmsDestructiveActions":
             confirmsDestructiveActions.toggle()
+        case "cottage-settings:toggle:detailedLogsEnabled":
+            detailedLogsEnabled.toggle()
         default:
             return false
         }

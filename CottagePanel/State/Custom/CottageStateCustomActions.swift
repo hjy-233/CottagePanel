@@ -201,6 +201,11 @@ extension CottageState {
         }
         customLiveWorkItem = workItem
         let debounce = max(activeCustomAction.definition.input.debounceMilliseconds, 0)
+        guard debounce > 0 else {
+            workItem.perform()
+            return
+        }
+
         DispatchQueue.main.asyncAfter(
             deadline: .now() + .milliseconds(debounce),
             execute: workItem

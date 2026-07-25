@@ -47,7 +47,7 @@ private func webSearchCustomAction() -> CustomAction {
             trigger: .live,
             input: CustomActionInputDefinition(
                 placeholder: L10n.text("action.webSearch.placeholder"),
-                debounceMilliseconds: 120,
+                debounceMilliseconds: 0,
                 allowsEmptyQuery: false
             ),
             searchAccessory: CustomSearchAccessoryDefinition(

@@ -16,6 +16,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
+        CottageLogStore.ensureLogFile()
+        CottageLogStore.info("app.launch", [
+            "version": Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "",
+            "build": Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? ""
+        ])
         state.hidePanel = { [weak self] in
             self?.hidePanel()
         }

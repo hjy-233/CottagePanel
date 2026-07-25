@@ -17,6 +17,7 @@ struct SettingsView: View {
                 Toggle(L10n.text("settings.showKeyboardHints"), isOn: $state.showsKeyboardHints)
                 Toggle(L10n.text("settings.openPanelOnLaunch"), isOn: $state.opensPanelOnLaunch)
                 Toggle(L10n.text("settings.confirmDestructiveActions"), isOn: $state.confirmsDestructiveActions)
+                Toggle(L10n.text("settings.detailedLogs"), isOn: $state.detailedLogsEnabled)
                 Toggle(L10n.text("settings.restorePanelSession"), isOn: $state.restoresPanelSession)
                 Stepper(value: $state.panelSessionRestoreSeconds, in: 5...300, step: 5) {
                     Text(

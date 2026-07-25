@@ -43,6 +43,7 @@
 "settings.showKeyboardHints" = "显示底部快捷键提示";
 "settings.openPanelOnLaunch" = "启动后自动打开面板";
 "settings.confirmDestructiveActions" = "危险操作前确认";
+"settings.detailedLogs" = "详细日志";
 "settings.restorePanelSession" = "恢复最近面板现场";
 "settings.restorePanelSeconds" = "恢复窗口：%d 秒";
 "settings.language" = "语言";
@@ -140,6 +141,14 @@
 "actions.export.continue" = "继续";
 "actions.export.cancel" = "取消";
 "action.config.title" = "Cottage 配置文件夹";
+"action.cottageLogs.title" = "日志输出";
+"action.cottageLogs.subtitle" = "查看 Cottage 详细日志";
+"action.cottageLogs.placeholder" = "搜索日志...";
+"cottageLogs.openFolder" = "打开日志文件夹";
+"cottageLogs.empty.title" = "没有日志";
+"cottageLogs.empty.subtitle" = "先执行一些动作，日志会显示在这里。";
+"cottageLogs.metadata.file" = "文件";
+"cottageLogs.metadata.line" = "行";
 "action.fileSearch.title" = "搜索文件";
 "action.fileSearch.subtitle" = "用 Spotlight 搜索本机文件";
 "action.fileSearch.placeholder" = "搜索文件...";
@@ -176,6 +185,7 @@
 "action.fontBook.title" = "字体册";
 "tag.settings" = "设置";
 "tag.config" = "配置";
+"tag.cottageLogs" = "日志";
 "tag.fileSearch" = "文件";
 "tag.app" = "app";
 "tag.application" = "应用";

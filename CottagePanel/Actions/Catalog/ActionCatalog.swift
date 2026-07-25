@@ -17,6 +17,7 @@ extension CottageState {
             ) { [weak self] in
                 self?.openConfig()
             },
+            cottageLogsCottageAction(),
             recentSearchCottageAction(),
             calculateCottageAction(),
             translatorCottageAction(),

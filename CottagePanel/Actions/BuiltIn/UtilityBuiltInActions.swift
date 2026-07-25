@@ -152,6 +152,7 @@ private func hashCustomAction() -> CustomAction {
         scriptFolder: "Hash",
         scriptName: "hash-run.py",
         trigger: .live,
+        debounceMilliseconds: 120,
         menuActions: [pickFileSHA256MenuAction()]
     ))
 }
@@ -166,6 +167,7 @@ private struct UtilityScriptActionSpec {
     let scriptFolder: String
     let scriptName: String
     let trigger: CustomActionTrigger
+    var debounceMilliseconds = 0
     var menuActions: [CustomMenuActionDefinition] = []
     var preview: CustomActionPreviewDefinition = CustomActionPreviewDefinition(style: .text)
 }
@@ -190,7 +192,7 @@ private func scriptCustomAction(_ spec: UtilityScriptActionSpec) -> CustomAction
             preview: spec.preview,
             input: CustomActionInputDefinition(
                 placeholder: L10n.text(spec.placeholderKey),
-                debounceMilliseconds: 250,
+                debounceMilliseconds: spec.debounceMilliseconds,
                 allowsEmptyQuery: false
             )
         ),

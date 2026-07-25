@@ -3,6 +3,12 @@ import Foundation
 extension CustomActionRunner {
     @MainActor
     static func executeMenuAction(_ menuAction: CustomMenuActionDefinition, in customAction: CustomAction) {
+        CottageLogStore.info("customAction.menuAction.execute", [
+            "actionID": customAction.definition.id,
+            "menuActionID": menuAction.id,
+            "menuActionTitle": menuAction.title,
+            "type": menuAction.type.rawValue
+        ])
         let definition = CustomActionDefinition(
             id: menuAction.id,
             title: menuAction.title,
@@ -25,14 +31,17 @@ extension CustomActionRunner {
     @discardableResult
     static func executeResult(_ result: CustomActionResult) -> CustomResultExecutionStatus {
         if let url = result.url, openURL(url) {
+            CottageLogStore.info("customAction.result.openURL", resultLogFields(result, target: url))
             return .opened
         }
 
         if let path = result.path, openPath(path) {
+            CottageLogStore.info("customAction.result.openPath", resultLogFields(result, target: path))
             return .opened
         }
 
         if let command = result.command {
+            CottageLogStore.info("customAction.result.command", resultLogFields(result, target: command))
             let shellAction = CustomAction(
                 definition: CustomActionDefinition.manualShell(command: command),
                 directoryURL: FileManager.default.homeDirectoryForCurrentUser
@@ -42,6 +51,7 @@ extension CustomActionRunner {
         }
 
         copyToPasteboard(result.text.isEmpty ? result.title : result.text)
+        CottageLogStore.info("customAction.result.copy", resultLogFields(result, target: "pasteboard"))
         return .copied
     }
 
@@ -53,6 +63,13 @@ extension CustomActionRunner {
         in customAction: CustomAction?
     ) -> CustomResultExecutionStatus {
         let fieldValue = result.value(for: resultAction.field)
+        CottageLogStore.info("customAction.resultAction.execute", [
+            "resultActionID": resultAction.id,
+            "resultActionTitle": resultAction.title,
+            "resultID": result.id,
+            "resultTitle": result.title,
+            "type": resultAction.type.rawValue
+        ])
         if resultAction.operation == "copyResultText" {
             copyToPasteboard(result.text.isEmpty ? result.title : result.text)
             return .copied
@@ -118,5 +135,14 @@ extension CustomActionRunner {
                 navigation: nil
             )
         )
+    }
+
+    private static func resultLogFields(_ result: CustomActionResult, target: String) -> [String: String] {
+        [
+            "resultID": result.id,
+            "resultTitle": result.title,
+            "subtitle": result.subtitle,
+            "target": target
+        ]
     }
 }

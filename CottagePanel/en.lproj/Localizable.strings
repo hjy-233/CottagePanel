@@ -43,6 +43,7 @@
 "settings.showKeyboardHints" = "Show keyboard hints";
 "settings.openPanelOnLaunch" = "Open panel on launch";
 "settings.confirmDestructiveActions" = "Confirm destructive actions";
+"settings.detailedLogs" = "Detailed logs";
 "settings.restorePanelSession" = "Restore recent panel state";
 "settings.restorePanelSeconds" = "Restore window: %d seconds";
 "settings.language" = "Language";
@@ -140,6 +141,14 @@
 "actions.export.continue" = "Continue";
 "actions.export.cancel" = "Cancel";
 "action.config.title" = "Cottage Config Folder";
+"action.cottageLogs.title" = "Cottage Logs";
+"action.cottageLogs.subtitle" = "View detailed Cottage logs";
+"action.cottageLogs.placeholder" = "Search logs...";
+"cottageLogs.openFolder" = "Open Logs Folder";
+"cottageLogs.empty.title" = "No Logs";
+"cottageLogs.empty.subtitle" = "Run actions first, then logs will appear here.";
+"cottageLogs.metadata.file" = "File";
+"cottageLogs.metadata.line" = "Line";
 "action.fileSearch.title" = "Search Files";
 "action.fileSearch.subtitle" = "Search local files with Spotlight";
 "action.fileSearch.placeholder" = "Search files...";
@@ -176,6 +185,7 @@
 "action.fontBook.title" = "Font Book";
 "tag.settings" = "settings";
 "tag.config" = "config";
+"tag.cottageLogs" = "logs";
 "tag.fileSearch" = "files";
 "tag.app" = "app";
 "tag.application" = "application";

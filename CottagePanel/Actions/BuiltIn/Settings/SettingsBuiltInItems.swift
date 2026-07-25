@@ -140,6 +140,13 @@ extension CottageState {
                 value: confirmsDestructiveActions,
                 command: "cottage-settings:toggle:confirmsDestructiveActions",
                 tags: ["confirm", "destructive", "security"]
+            ),
+            toggleItem(
+                id: "detailed-logs",
+                titleKey: "settings.detailedLogs",
+                value: detailedLogsEnabled,
+                command: "cottage-settings:toggle:detailedLogsEnabled",
+                tags: ["logs", "debug", "privacy", "security"]
             )
         ]
     }

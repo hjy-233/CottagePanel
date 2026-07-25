@@ -6,6 +6,7 @@ SCHEME="CottagePanel"
 PROJECT_PATH="CottagePanel.xcodeproj"
 CONFIGURATION="Release"
 OUTPUT_ROOT="Builds/CottagePanel"
+KEEP_BUILD_COUNT=2
 RESTART_APP=1
 RUN_EXPORT=1
 
@@ -222,6 +223,31 @@ write_size_report() {
   } | tee "$report_path"
 }
 
+cleanup_old_builds() {
+  local build_root="$ROOT_DIR/$OUTPUT_ROOT"
+  local index=0
+  local removed=0
+
+  [[ -d "$build_root" ]] || return
+
+  log "清理旧构建"
+  while IFS= read -r build_dir; do
+    [[ -d "$build_dir" ]] || continue
+    index=$((index + 1))
+    if [[ "$index" -le "$KEEP_BUILD_COUNT" ]]; then
+      continue
+    fi
+
+    rm -rf "$build_dir"
+    printf '已删除：%s\n' "$build_dir"
+    removed=$((removed + 1))
+  done < <(ls -1dt "$build_root"/* 2>/dev/null || true)
+
+  if [[ "$removed" -eq 0 ]]; then
+    printf '无需清理，已保留最近 %d 次构建。\n' "$KEEP_BUILD_COUNT"
+  fi
+}
+
 log "输出目录"
 printf '%s\n' "$OUT_DIR"
 
@@ -294,6 +320,8 @@ if [[ "$RUN_EXPORT" -eq 1 ]]; then
 else
   log "跳过 archive/export"
 fi
+
+cleanup_old_builds
 
 log "完成"
 printf '输出目录：%s\n' "$OUT_DIR"

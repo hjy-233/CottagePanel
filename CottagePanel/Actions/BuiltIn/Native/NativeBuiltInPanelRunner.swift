@@ -21,6 +21,17 @@ extension CottageState {
         selectedCustomResultID = nil
         shownCustomResultMenuID = nil
         customResultIndex = 0
+        let query = customQuery
+        let accessoryValue = customAccessoryValue
+        if let immediateResult = NativeBuiltInPanelRunner.runImmediateIfPossible(
+            actionID: customAction.definition.id,
+            query: query,
+            accessoryValue: accessoryValue
+        ) {
+            finishNativePanelRun(immediateResult, customAction: customAction)
+            return true
+        }
+
         isCustomActionRunning = true
         if customAction.definition.trigger == .manual {
             showStatus(L10n.text("status.running"))
@@ -29,8 +40,6 @@ extension CottageState {
 
         let processID = UUID()
         activeCustomProcessID = processID
-        let query = customQuery
-        let accessoryValue = customAccessoryValue
         customNativeTask = Task { [weak self] in
             let result = await NativeBuiltInPanelRunner.run(
                 actionID: customAction.definition.id,
@@ -74,6 +83,7 @@ extension CottageState {
 enum NativeBuiltInPanelActionID: String {
     case calculate = "built-in-calculate"
     case colorConverter = "built-in-color-converter"
+    case cottageLogs = "built-in-cottage-logs"
     case fileSearch = "built-in-file-search"
     case gitViewer = "built-in-git-viewer"
     case hash = "built-in-hash"
@@ -88,6 +98,56 @@ enum NativeBuiltInPanelActionID: String {
 }
 
 enum NativeBuiltInPanelRunner {
+    static func runImmediateIfPossible(
+        actionID: String,
+        query: String,
+        accessoryValue: String
+    ) -> Result<[CustomActionResult], Error>? {
+        guard let actionID = NativeBuiltInPanelActionID(rawValue: actionID) else {
+            return nil
+        }
+
+        do {
+            let results: [CustomActionResult]
+            switch actionID {
+            case .calculate:
+                guard let calculateResults = NativeCalculateBuiltIn.immediateResults(query: query) else {
+                    return nil
+                }
+                results = calculateResults
+            case .colorConverter:
+                results = try NativeColorConverterBuiltIn.results(query: query)
+            case .cottageLogs:
+                results = NativeCottageLogsBuiltIn.results(query: query)
+            case .jsonFormatter:
+                results = NativeJSONFormatterBuiltIn.results(query: query)
+            case .qrCode:
+                results = try NativeQRCodeBuiltIn.results(query: query, codeType: accessoryValue)
+            case .recentSearch:
+                results = NativeRecentSearchBuiltIn.results(query: query)
+            case .unixTimeConverter:
+                results = NativeUnixTimeConverterBuiltIn.results(query: query)
+            case .webSearch:
+                results = NativeWebSearchBuiltIn.results(query: query, engine: accessoryValue)
+            case .wordsCount:
+                results = NativeWordsCountBuiltIn.results(query: query)
+            case .fileSearch, .gitViewer, .hash, .processManager, .translator:
+                return nil
+            }
+            CottageLogStore.info("nativeAction.immediate", [
+                "actionID": actionID.rawValue,
+                "resultCount": "\(results.count)"
+            ])
+            return .success(results)
+        } catch {
+            CottageLogStore.error("nativeAction.immediateFailed", [
+                "actionID": actionID.rawValue,
+                "error": error.localizedDescription
+            ])
+            return .failure(error)
+        }
+    }
+
     static func run(
         actionID: String,
         query: String,
@@ -98,11 +158,25 @@ enum NativeBuiltInPanelRunner {
         }
 
         do {
+            CottageLogStore.info("nativeAction.start", [
+                "actionID": actionID.rawValue,
+                "query": query,
+                "accessoryValue": accessoryValue
+            ])
             let results = try await results(for: actionID, query: query, accessoryValue: accessoryValue)
+            CottageLogStore.info("nativeAction.finish", [
+                "actionID": actionID.rawValue,
+                "resultCount": "\(results.count)"
+            ])
             return .success(results)
         } catch is CancellationError {
+            CottageLogStore.info("nativeAction.cancelled", ["actionID": actionID.rawValue])
             return .success([])
         } catch {
+            CottageLogStore.error("nativeAction.failed", [
+                "actionID": actionID.rawValue,
+                "error": error.localizedDescription
+            ])
             return .failure(error)
         }
     }
@@ -117,6 +191,8 @@ enum NativeBuiltInPanelRunner {
             return try await NativeCalculateBuiltIn.results(query: query)
         case .colorConverter:
             return try NativeColorConverterBuiltIn.results(query: query)
+        case .cottageLogs:
+            return NativeCottageLogsBuiltIn.results(query: query)
         case .fileSearch:
             return try await NativeFileSearchBuiltIn.results(query: query, scope: accessoryValue)
         case .gitViewer:
@@ -182,6 +258,11 @@ func nativeProcessOutput(
     timeout: TimeInterval = 8
 ) async throws -> (status: Int32, stdout: Data, stderr: Data) {
     try await withCheckedThrowingContinuation { continuation in
+        CottageLogStore.info("nativeProcess.start", [
+            "executable": executable,
+            "arguments": arguments.joined(separator: " "),
+            "timeout": "\(timeout)"
+        ])
         let process = Process()
         let outputPipe = Pipe()
         let errorPipe = Pipe()
@@ -194,12 +275,23 @@ func nativeProcessOutput(
         process.terminationHandler = { finishedProcess in
             let output = outputPipe.fileHandleForReading.readDataToEndOfFile()
             let error = errorPipe.fileHandleForReading.readDataToEndOfFile()
+            CottageLogStore.info("nativeProcess.finish", [
+                "executable": executable,
+                "status": "\(finishedProcess.terminationStatus)",
+                "stdoutBytes": "\(output.count)",
+                "stderrBytes": "\(error.count)",
+                "stderr": nativeUTF8(error)
+            ])
             resumeBox.resume(.success((finishedProcess.terminationStatus, output, error)))
         }
 
         do {
             try process.run()
         } catch {
+            CottageLogStore.error("nativeProcess.startFailed", [
+                "executable": executable,
+                "error": error.localizedDescription
+            ])
             resumeBox.resume(.failure(error))
             return
         }
@@ -209,6 +301,10 @@ func nativeProcessOutput(
                 return
             }
             process.terminate()
+            CottageLogStore.error("nativeProcess.timeout", [
+                "executable": executable,
+                "timeout": "\(timeout)"
+            ])
             resumeBox.resume(.failure(NativeBuiltInError.message("Action timed out")))
         }
     }

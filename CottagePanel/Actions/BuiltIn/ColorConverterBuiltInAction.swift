@@ -60,7 +60,7 @@ private func colorConverterCustomAction() -> CustomAction {
             resultActions: [copyHexColorAction(), copyRGBColorAction()],
             input: CustomActionInputDefinition(
                 placeholder: L10n.text("action.colorConverter.placeholder"),
-                debounceMilliseconds: 120,
+                debounceMilliseconds: 0,
                 allowsEmptyQuery: false
             )
         ),

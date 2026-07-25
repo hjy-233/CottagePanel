@@ -2,8 +2,41 @@
 import Foundation
 
 enum NativeCalculateBuiltIn {
+    static func immediateResults(query: String) -> [CustomActionResult]? {
+        let query = query.trimmedSearchText
+        guard !query.isEmpty else {
+            return localResults(query: query)
+        }
+        guard !isCurrencyQuery(query) else {
+            return nil
+        }
+        return localResults(query: query)
+    }
+
     static func results(query: String) async throws -> [CustomActionResult] {
         let query = query.trimmedSearchText
+        if let results = immediateResults(query: query) {
+            return results
+        }
+
+        do {
+            if let results = try await currency(query) { return results }
+            return try expression(query)
+        } catch {
+            return [
+                nativeResult(
+                    id: "error",
+                    title: "无法计算",
+                    subtitle: error.localizedDescription,
+                    text: error.localizedDescription,
+                    tags: ["error"],
+                    isError: true
+                )
+            ]
+        }
+    }
+
+    private static func localResults(query: String) -> [CustomActionResult] {
         guard !query.isEmpty else {
             return [
                 nativeResult(
@@ -19,7 +52,6 @@ enum NativeCalculateBuiltIn {
         do {
             if let results = growth(query) { return results }
             if let results = percentage(query) { return results }
-            if let results = try await currency(query) { return results }
             if let results = try unit(query) { return results }
             if let results = timezone(query) { return results }
             if let results = relativeDate(query) { return results }
@@ -38,6 +70,19 @@ enum NativeCalculateBuiltIn {
                 )
             ]
         }
+    }
+
+    private static func isCurrencyQuery(_ query: String) -> Bool {
+        guard let match = query.firstMatch(of: /^([-+]?\d+(?:\.\d+)?)\s*([a-zA-Z]+)\s+(?:to|in|as|为|到|转)\s+([a-zA-Z]+)$/) else {
+            return false
+        }
+
+        let source = String(match.2).lowercased()
+        let target = String(match.3).lowercased()
+        return fiatAliases[source] != nil
+            || fiatAliases[target] != nil
+            || cryptoIDs[source] != nil
+            || cryptoIDs[target] != nil
     }
 
     private static func expression(_ query: String) throws -> [CustomActionResult] {

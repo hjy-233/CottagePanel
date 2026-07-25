@@ -38,7 +38,7 @@ private func recentSearchCustomAction() -> CustomAction {
             trigger: .live,
             input: CustomActionInputDefinition(
                 placeholder: L10n.text("action.recentSearch.placeholder"),
-                debounceMilliseconds: 150,
+                debounceMilliseconds: 0,
                 allowsEmptyQuery: true,
                 acceptsDroppedText: false,
                 acceptsDroppedFiles: false

@@ -39,7 +39,7 @@ private func qrCodeCustomAction() -> CustomAction {
             trigger: .live,
             input: CustomActionInputDefinition(
                 placeholder: L10n.text("action.qrCode.placeholder"),
-                debounceMilliseconds: 180,
+                debounceMilliseconds: 40,
                 allowsEmptyQuery: false
             ),
             searchAccessory: CustomSearchAccessoryDefinition(

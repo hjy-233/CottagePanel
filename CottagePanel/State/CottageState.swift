@@ -81,6 +81,13 @@ final class CottageState: ObservableObject {
         }
     }
 
+    @Published var detailedLogsEnabled: Bool {
+        didSet {
+            CottageLogStore.setDetailedLogsEnabled(detailedLogsEnabled)
+            saveSettings()
+        }
+    }
+
     @Published var restoresPanelSession: Bool {
         didSet {
             saveSettings()
@@ -181,6 +188,8 @@ final class CottageState: ObservableObject {
         showsKeyboardHints = settings.showsKeyboardHints
         opensPanelOnLaunch = settings.opensPanelOnLaunch
         confirmsDestructiveActions = settings.confirmsDestructiveActions
+        detailedLogsEnabled = settings.detailedLogsEnabled
+        CottageLogStore.setDetailedLogsEnabled(settings.detailedLogsEnabled)
         restoresPanelSession = settings.restoresPanelSession
         panelSessionRestoreSeconds = settings.panelSessionRestoreSeconds
         appLanguage = settings.appLanguage
@@ -348,6 +357,7 @@ extension CottageState {
             showsKeyboardHints: showsKeyboardHints,
             opensPanelOnLaunch: opensPanelOnLaunch,
             confirmsDestructiveActions: confirmsDestructiveActions,
+            detailedLogsEnabled: detailedLogsEnabled,
             restoresPanelSession: restoresPanelSession,
             panelSessionRestoreSeconds: panelSessionRestoreSeconds,
             appLanguage: appLanguage,
