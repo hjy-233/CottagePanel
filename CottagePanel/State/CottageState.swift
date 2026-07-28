@@ -1,8 +1,10 @@
+// 保存主面板运行时状态和跨模块共享行为
 import AppKit
 import SwiftUI
 
 @MainActor
 final class CottageState: ObservableObject {
+    // MARK: - Main Panel State
     @Published var query = "" {
         didSet {
             if normalizeQueryChipIfNeeded() {
@@ -154,10 +156,14 @@ final class CottageState: ObservableObject {
         }
     }
 
+    // MARK: - App Callbacks
+
     var hidePanel: (() -> Void)?
     var showSettings: (() -> Void)?
     var quitApp: (() -> Void)?
     var refreshMenuBar: (() -> Void)?
+
+    // MARK: - Internal Runtime State
 
     private let fileManager = FileManager.default
     var visibleActionIDs = Set<String>()
@@ -179,6 +185,8 @@ final class CottageState: ObservableObject {
     private var executionCounts: [String: Int]
     private var recentExecutionIDs: [String]
     lazy var actions: [CottageAction] = sortedActions(builtInActions + applicationActionCache + customActions())
+
+    // MARK: - Lifecycle
 
     init() {
         let settings = CottageSettingsStore.load()

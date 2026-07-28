@@ -1,3 +1,4 @@
+// 在快捷键库不可用时提供本地全局快捷键
 import Carbon.HIToolbox
 import Foundation
 

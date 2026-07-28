@@ -1,3 +1,4 @@
+// 按行缓冲 action stdout，避免不完整 JSON 被解析导致执行失败
 import Foundation
 
 final class CustomActionOutputBuffer {

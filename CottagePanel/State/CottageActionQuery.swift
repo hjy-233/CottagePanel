@@ -1,3 +1,4 @@
+// 解析搜索前缀、tag、快速命令和普通 query
 import Foundation
 
 struct CottageActionQuery {

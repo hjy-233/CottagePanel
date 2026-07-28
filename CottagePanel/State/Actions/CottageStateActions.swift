@@ -1,3 +1,4 @@
+// 处理主面板动作执行、收藏、删除和卸载
 import AppKit
 import SwiftUI
 

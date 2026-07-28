@@ -1,3 +1,4 @@
+// 维护 Cmd+数字等快速动作的可见项快照
 import Foundation
 
 extension CottageState {

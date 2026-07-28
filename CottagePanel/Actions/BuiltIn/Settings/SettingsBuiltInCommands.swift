@@ -1,3 +1,4 @@
+// 执行设置面板结果对应的命令
 import KeyboardShortcuts
 
 extension CottageState {

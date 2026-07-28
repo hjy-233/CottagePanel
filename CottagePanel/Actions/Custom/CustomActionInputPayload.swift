@@ -1,3 +1,4 @@
+// 定义传给 action stdin 的结构化输入 payload
 import Foundation
 
 struct CustomActionInputPayload: Encodable {

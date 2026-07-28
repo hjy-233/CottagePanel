@@ -1,3 +1,4 @@
+// 管理自定义 action panel、popup、form 的运行流程
 import AppKit
 import Foundation
 import SwiftUI
@@ -14,6 +15,8 @@ extension CottageState {
     var selectedCustomResult: CustomActionResult? {
         customResults.first { $0.id == selectedCustomResultID }
     }
+
+    // MARK: - Action Entry
 
     func runCustomAction(_ customAction: CustomAction) {
         guard confirmTrustedCustomActionIfNeeded(customAction) else {
@@ -132,6 +135,8 @@ extension CottageState {
         return true
     }
 
+    // MARK: - Selection Execution
+
     func runCustomSelection() {
         guard let selectedCustomResult else {
             runActiveCustomActionInput()
@@ -169,6 +174,8 @@ extension CottageState {
 
         runPanelCustomAction(activeCustomAction)
     }
+
+    // MARK: - Live Query
 
     func customQueryDidChange() {
         guard !isRestoringCustomPanelCache else {
@@ -266,6 +273,8 @@ extension CottageState {
         }
         saveActiveCustomPanelCache()
     }
+
+    // MARK: - Panel Lifecycle
 
     private func enterCustomPanel(_ customAction: CustomAction) {
         stopCustomProcess()

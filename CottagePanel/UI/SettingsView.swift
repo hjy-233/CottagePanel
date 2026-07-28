@@ -1,3 +1,4 @@
+// 已弃用设置界面
 import AppKit
 import KeyboardShortcuts
 import SwiftUI

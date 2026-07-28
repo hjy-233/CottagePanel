@@ -1,3 +1,4 @@
+// 生成和执行主动作列表中的二级操作菜单
 import AppKit
 import KeyboardShortcuts
 

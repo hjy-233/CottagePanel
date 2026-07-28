@@ -1,7 +1,11 @@
+// 渲染主命令面板的搜索、列表、预览和 footer
 import SwiftUI
 
 struct MainActionPanel: View {
+    // MARK: - Inputs
     @ObservedObject var state: CottageState
+
+    // MARK: - Body
 
     var body: some View {
         HSplitView {

@@ -1,3 +1,4 @@
+// 渲染 popup action 的轻量输入和结果窗口
 import SwiftUI
 
 struct CustomActionPopupView: View {

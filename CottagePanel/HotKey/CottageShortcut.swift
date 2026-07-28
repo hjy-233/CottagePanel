@@ -1,3 +1,4 @@
+// 定义内部快捷键模型和系统事件匹配逻辑
 import AppKit
 
 struct CottageShortcut: Equatable {

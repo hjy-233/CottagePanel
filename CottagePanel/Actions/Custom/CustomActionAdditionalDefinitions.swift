@@ -1,3 +1,4 @@
+// 定义自定义 action 的扩展 API 字段
 import Foundation
 
 struct CustomSearchAccessoryDefinition: Codable, Hashable {

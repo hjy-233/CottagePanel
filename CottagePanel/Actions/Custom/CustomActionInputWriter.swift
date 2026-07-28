@@ -1,3 +1,4 @@
+// 把 action 输入 payload 写入子进程 stdin。
 import Foundation
 
 enum CustomActionInputWriter {

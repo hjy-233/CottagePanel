@@ -1,3 +1,4 @@
+// 描述动作菜单里的二级操作项及其执行入口
 import AppKit
 
 struct CottageSecondaryAction: Identifiable {

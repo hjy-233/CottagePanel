@@ -1,3 +1,4 @@
+// 封装 action 文件、URL等操作
 import AppKit
 import Foundation
 

@@ -1,3 +1,4 @@
+// 渲染 Cottage 或 action 名称
 import SwiftUI
 
 struct FooterMenuButton: View {

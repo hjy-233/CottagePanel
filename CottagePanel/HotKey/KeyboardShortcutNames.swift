@@ -1,3 +1,4 @@
+// 集中声明 Cottage 可配置快捷键的持久化名称
 import KeyboardShortcuts
 
 extension KeyboardShortcuts.Name {

@@ -1,3 +1,4 @@
+// 读写 Cottage 本地设置 JSON
 import Foundation
 
 struct CottageSettings: Codable {

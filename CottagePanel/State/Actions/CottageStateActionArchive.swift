@@ -1,3 +1,4 @@
+// 导入、导出和校验自定义 actions 归档包
 import AppKit
 import Foundation
 import UniformTypeIdentifiers

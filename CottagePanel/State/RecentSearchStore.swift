@@ -1,3 +1,4 @@
+// 本地保存最近搜索历史并过滤敏感输入
 import Foundation
 
 enum RecentSearchCommand {

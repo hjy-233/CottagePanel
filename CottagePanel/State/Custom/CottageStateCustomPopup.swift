@@ -1,3 +1,4 @@
+// 管理 popup action 的打开、运行和关闭
 import AppKit
 import Foundation
 

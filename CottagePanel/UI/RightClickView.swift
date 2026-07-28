@@ -1,3 +1,4 @@
+// 把 AppKit 右键事件转发给 SwiftUI 状态层
 import AppKit
 import SwiftUI
 

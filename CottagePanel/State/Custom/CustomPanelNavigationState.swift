@@ -1,3 +1,4 @@
+// 保存 action 子页面导航栈中的单页状态
 import Foundation
 
 struct CustomPanelNavigationState: Hashable {

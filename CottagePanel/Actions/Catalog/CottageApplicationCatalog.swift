@@ -1,3 +1,4 @@
+// 扫描 macOS 应用并转换为 Cottage 动作
 import AppKit
 
 extension CottageState {

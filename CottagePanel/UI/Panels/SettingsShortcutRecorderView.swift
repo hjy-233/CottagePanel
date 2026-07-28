@@ -1,3 +1,4 @@
+// 桥接 KeyboardShortcuts 录入控件到 SwiftUI
 import KeyboardShortcuts
 import SwiftUI
 

@@ -1,3 +1,4 @@
+// 执行自定义结果项的附加操作
 import Foundation
 
 extension CustomActionRunner {

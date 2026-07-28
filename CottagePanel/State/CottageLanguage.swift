@@ -1,3 +1,4 @@
+// 定义应用语言选项和 Bundle 语言解析
 import Foundation
 
 enum CottageLanguage: String, Codable, CaseIterable, Identifiable {

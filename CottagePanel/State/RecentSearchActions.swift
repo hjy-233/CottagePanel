@@ -1,3 +1,4 @@
+// 捕获和恢复主面板及 action 内的最近搜索
 import Foundation
 
 extension CottageState {

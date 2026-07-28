@@ -1,3 +1,4 @@
+// 读取本地 Cottage 日志并转换为结果列表
 import Foundation
 
 enum NativeCottageLogsBuiltIn {

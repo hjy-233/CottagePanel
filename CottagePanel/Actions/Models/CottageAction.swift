@@ -1,3 +1,4 @@
+// 定义主面板列表中统一展示和执行的动作模型
 import AppKit
 
 struct CottageAction: Identifiable, Hashable {

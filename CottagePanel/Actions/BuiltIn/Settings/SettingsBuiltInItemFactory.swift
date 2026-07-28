@@ -1,3 +1,4 @@
+// 提供设置项结果的通用构造函数
 extension CottageState {
     func toggleItem(
         id: String,

@@ -1,4 +1,5 @@
 // swiftlint:disable blanket_disable_command function_body_length line_length
+// 实现文件搜索、进程管理、窗口切换等系统内置逻辑
 import AppKit
 import Foundation
 

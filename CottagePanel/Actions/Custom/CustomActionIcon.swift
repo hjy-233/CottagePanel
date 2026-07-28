@@ -1,3 +1,4 @@
+// 加载自定义 action 目录内的图标资源
 import AppKit
 import Foundation
 

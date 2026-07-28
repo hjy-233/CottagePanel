@@ -1,3 +1,4 @@
+// 写入本地安全日志，并按设置控制详细内容
 import Foundation
 
 enum CottageLogStore {

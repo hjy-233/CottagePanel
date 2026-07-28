@@ -1,3 +1,4 @@
+// 把 KeyboardShortcuts 录入结果转换为 Cottage 可匹配快捷键
 import AppKit
 import KeyboardShortcuts
 

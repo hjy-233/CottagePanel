@@ -1,7 +1,9 @@
 // swiftlint:disable blanket_disable_command cyclomatic_complexity file_length line_length type_body_length
+// 实现计算器数学、单位、日期、货币等的解析
 import Foundation
 
 enum NativeCalculateBuiltIn {
+    // MARK: - Entry Points
     static func immediateResults(query: String) -> [CustomActionResult]? {
         let query = query.trimmedSearchText
         guard !query.isEmpty else {
@@ -85,6 +87,8 @@ enum NativeCalculateBuiltIn {
             || cryptoIDs[target] != nil
     }
 
+    // MARK: - Math Results
+
     private static func expression(_ query: String) throws -> [CustomActionResult] {
         let parser = NativeMathParser(query)
         let value = try parser.parse()
@@ -111,6 +115,8 @@ enum NativeCalculateBuiltIn {
         }
         return results
     }
+
+    // MARK: - Percent and Growth
 
     private static func percentage(_ query: String) -> [CustomActionResult]? {
         if let match = query.firstMatch(of: /^([-+]?\d+(?:\.\d+)?)\s*(?:%|percent)\s*(?:of|on|\*)\s*([-+]?\d+(?:\.\d+)?)$/) {
@@ -141,6 +147,8 @@ enum NativeCalculateBuiltIn {
         }
         return nil
     }
+
+    // MARK: - Unit Conversion
 
     private static func unit(_ query: String) throws -> [CustomActionResult]? {
         guard let match = query.firstMatch(of: /^([-+]?\d+(?:\.\d+)?)\s*([a-zA-Zµμ]+(?:\^?\d+|[²³])?)\s+(?:to|in|as|为|到|转)\s+([a-zA-Zµμ]+(?:\^?\d+|[²³])?)(?:\s+(?:at|@)\s+(\d+(?:\.\d+)?)\s*(ppi|dpi|x))?$/) else {
@@ -311,6 +319,8 @@ enum NativeCalculateBuiltIn {
         formatter.timeZone = targetZone
         return [nativeResult(id: "timezone", title: formatter.string(from: sourceDate), subtitle: "\(sourceZone.identifier) → \(targetZone.identifier)", text: sourceDate.formatted(.iso8601), tags: ["timezone"])]
     }
+
+    // MARK: - Currency
 
     private static func currency(_ query: String) async throws -> [CustomActionResult]? {
         guard let match = query.firstMatch(of: /^([-+]?\d+(?:\.\d+)?)\s*([a-zA-Z]+)\s+(?:to|in|as|为|到|转)\s+([a-zA-Z]+)$/) else {

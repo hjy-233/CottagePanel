@@ -1,3 +1,4 @@
+// 提供打开路径、提示缺失目录等搜索辅助动作
 import AppKit
 
 func openHomePath(_ path: String) {

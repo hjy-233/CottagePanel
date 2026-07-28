@@ -1,3 +1,4 @@
+// 生成设置面板里的快捷键录入项
 import KeyboardShortcuts
 
 extension CottageState {

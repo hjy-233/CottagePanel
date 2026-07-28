@@ -1,3 +1,4 @@
+// 给纯键盘模式虚拟焦点区域提供视觉边框
 import SwiftUI
 
 extension View {

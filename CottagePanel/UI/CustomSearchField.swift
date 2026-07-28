@@ -1,3 +1,4 @@
+// 封装原生 NSTextField，确保搜索框焦点稳定
 import AppKit
 import SwiftUI
 

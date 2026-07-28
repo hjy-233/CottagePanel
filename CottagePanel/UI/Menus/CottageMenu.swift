@@ -1,4 +1,7 @@
+// 渲染可复用的 Cottage 弹出菜单和子菜单
 import SwiftUI
+
+// MARK: - Menu Models
 
 struct CottageMenuItem: Identifiable {
     let id: String
@@ -41,6 +44,8 @@ enum CottageMenuEntry: Identifiable {
         }
     }
 }
+
+// MARK: - Menu View
 
 struct CottageMenu: View {
     let title: String?

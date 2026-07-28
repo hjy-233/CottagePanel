@@ -1,4 +1,5 @@
 // swiftlint:disable blanket_disable_command file_length large_tuple line_length
+// 实现二维码、颜色、网页搜索、翻译等媒体和网络内置逻辑
 import AppKit
 import CoreImage
 import CryptoKit

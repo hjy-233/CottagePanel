@@ -1,3 +1,4 @@
+// 扫描并加载本地自定义 action 目录
 import AppKit
 import Foundation
 

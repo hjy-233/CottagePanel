@@ -1,3 +1,4 @@
+// 解析自定义 action 输出的 JSONL 结果
 import Foundation
 
 private struct CustomActionResultPayload: Decodable {

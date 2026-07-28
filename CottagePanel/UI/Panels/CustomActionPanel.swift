@@ -1,8 +1,12 @@
+// 渲染自定义 action 的 panel、form 和结果预览界面
 import AppKit
 import SwiftUI
 
 struct CustomActionPanel: View {
+    // MARK: - Inputs
     @ObservedObject var state: CottageState
+
+    // MARK: - Body
 
     var body: some View {
         HSplitView {

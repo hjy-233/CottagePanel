@@ -3,6 +3,7 @@ import KeyboardShortcuts
 
 extension AppDelegate {
     func commandShortcutIndex(for event: NSEvent) -> Int? {
+        // macOS 硬件数字键 keyCode 映射到可见动作索引，用于 Cmd+1...9/0 快速执行前 10 项。
         [
             18: 0,
             19: 1,

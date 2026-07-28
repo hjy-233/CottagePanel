@@ -1,3 +1,4 @@
+// 状态栏图标，应用图标相关
 import AppKit
 
 enum CottageAppIcon {

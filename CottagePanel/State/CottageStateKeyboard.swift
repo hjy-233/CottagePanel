@@ -1,3 +1,4 @@
+// 处理 Keyboard-Only Mode 的上下文和按键分发
 import AppKit
 import Foundation
 

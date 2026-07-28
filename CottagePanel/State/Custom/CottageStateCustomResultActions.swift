@@ -1,3 +1,4 @@
+// 执行 action 结果项、复制和结果菜单快捷键
 import AppKit
 import Foundation
 

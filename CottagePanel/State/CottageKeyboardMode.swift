@@ -1,3 +1,4 @@
+// 定义纯键盘模式的上下文和导航键方案
 import AppKit
 import Foundation
 

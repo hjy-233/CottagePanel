@@ -1,4 +1,5 @@
 // swiftlint:disable blanket_disable_command line_length
+// 实现 Hash、JSON、Unix 时间、字数等本地工具逻辑
 import CryptoKit
 import Foundation
 

@@ -1,3 +1,4 @@
+// 定义设置面板中的列表项和快捷键项模型
 import KeyboardShortcuts
 
 struct SettingsPanelItem {

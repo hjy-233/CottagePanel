@@ -1,3 +1,4 @@
+// 标记动作来源类型，用于筛选、排序和展示
 import Foundation
 
 enum CottageActionKind {

@@ -1,3 +1,4 @@
+// 处理自定义结果列表选择和可见项快照
 import SwiftUI
 
 extension CottageState {

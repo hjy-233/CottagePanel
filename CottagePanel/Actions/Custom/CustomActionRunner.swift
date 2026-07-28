@@ -1,5 +1,8 @@
+// 运行自定义 action 并管理进程生命周期与输出
 import AppKit
 import Foundation
+
+// MARK: - Process Model
 
 struct CustomActionProcess {
     let id: UUID
@@ -55,6 +58,8 @@ enum CustomResultExecutionStatus {
     case executed
     case copied
 }
+
+// MARK: - Runner
 
 enum CustomActionRunner {
     @MainActor private static var retainedProcesses: [CustomActionProcess] = []

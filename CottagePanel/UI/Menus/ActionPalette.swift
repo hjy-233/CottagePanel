@@ -1,3 +1,4 @@
+// 显示动作可用操作的键盘化菜单
 import SwiftUI
 
 struct ActionPalette: View {

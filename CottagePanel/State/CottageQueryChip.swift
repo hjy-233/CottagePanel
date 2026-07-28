@@ -1,3 +1,4 @@
+// 定义搜索框中的前缀 chip 数据
 import Foundation
 
 struct CottageQueryChip: Equatable {

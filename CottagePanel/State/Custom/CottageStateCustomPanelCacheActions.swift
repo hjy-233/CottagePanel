@@ -1,3 +1,4 @@
+// 读写每个 action 独立的最近结果缓存
 import Foundation
 
 extension CottageState {

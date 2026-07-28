@@ -1,6 +1,9 @@
 // swiftlint:disable blanket_disable_command cyclomatic_complexity large_tuple optional_data_string_conversion
+// 调度所有原生内置动作并统一处理进程输出
 import AppKit
 import Foundation
+
+// MARK: - Cottage State Bridge
 
 @MainActor
 extension CottageState {
@@ -80,6 +83,8 @@ extension CottageState {
     }
 }
 
+// MARK: - Action Routing
+
 enum NativeBuiltInPanelActionID: String {
     case calculate = "built-in-calculate"
     case colorConverter = "built-in-color-converter"
@@ -96,6 +101,8 @@ enum NativeBuiltInPanelActionID: String {
     case webSearch = "built-in-web-search"
     case wordsCount = "built-in-words-count"
 }
+
+// MARK: - Native Runner
 
 enum NativeBuiltInPanelRunner {
     static func runImmediateIfPossible(
@@ -219,6 +226,8 @@ enum NativeBuiltInPanelRunner {
     }
 }
 
+// MARK: - Result Helpers
+
 func nativeResult(
     id: String,
     title: String,
@@ -251,6 +260,8 @@ func nativeResult(
         isError: isError
     )
 }
+
+// MARK: - Process Helpers
 
 func nativeProcessOutput(
     executable: String,

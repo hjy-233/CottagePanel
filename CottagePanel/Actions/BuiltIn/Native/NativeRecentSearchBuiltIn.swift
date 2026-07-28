@@ -1,3 +1,4 @@
+// 把最近搜索记录转换为可执行结果
 import Foundation
 
 enum NativeRecentSearchBuiltIn {

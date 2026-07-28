@@ -1,4 +1,7 @@
+// 定义 action.json 的核心协议模型
 import Foundation
+
+// MARK: - Core Enums
 
 enum CustomActionType: String, Codable {
     case script
@@ -33,6 +36,8 @@ enum CustomActionPostRunBehavior: String, Codable {
     case copyFirstResult
     case copySelectedResult
 }
+
+// MARK: - Action Definition
 
 struct CustomActionDefinition: Codable, Hashable {
     let apiVersion: Int
@@ -157,6 +162,8 @@ struct CustomActionDefinition: Codable, Hashable {
         menuBar = try container.decodeIfPresent(CustomMenuBarDefinition.self, forKey: .menuBar)
     }
 }
+
+// MARK: - Menu and Result Actions
 
 struct CustomMenuActionDefinition: Codable, Hashable {
     let id: String
@@ -304,6 +311,8 @@ struct CustomAction: Hashable {
         definition.id.hasPrefix("built-in-")
     }
 }
+
+// MARK: - Result Model
 
 struct CustomActionResult: Identifiable, Hashable {
     let id: String

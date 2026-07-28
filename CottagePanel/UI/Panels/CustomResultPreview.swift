@@ -1,7 +1,10 @@
+// 渲染右侧预览、metadata、颜色和图片预览
 import AppKit
 import Foundation
 import KeyboardShortcuts
 import SwiftUI
+
+// MARK: - Preview View
 
 struct CustomResultPreview: View {
     let customAction: CustomAction?

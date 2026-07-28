@@ -1,3 +1,4 @@
+// 安全逻辑，限制自定义 action 只能访问自身目录内文件
 import Foundation
 
 extension CustomAction {

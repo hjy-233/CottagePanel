@@ -1,3 +1,4 @@
+// 保存 action panel 最近输入和结果缓存
 import Foundation
 
 struct CustomPanelCache {

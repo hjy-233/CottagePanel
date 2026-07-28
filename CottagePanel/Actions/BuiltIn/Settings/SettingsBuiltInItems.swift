@@ -1,3 +1,4 @@
+// 生成设置面板各分类下的可编辑设置项
 import KeyboardShortcuts
 
 extension CottageState {
